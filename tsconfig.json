@@ -1,0 +1,12 @@
+{
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "rootDir": "packages/connect-search-creator/",
+    "outDir": "packages/connect-search-creator/build",
+  },
+  "exclude": [
+    "search-application-templates",
+    "node_modules"
+  ]
+}

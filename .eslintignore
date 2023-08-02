@@ -1,0 +1,4 @@
+node_modules
+packages/connect-search-creator/build
+packages/connect-search-creator/node_modules
+search-application-templates/*/node_modules
