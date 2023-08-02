@@ -13,7 +13,7 @@
   "workspaces": {
     "packages": [
       "packages/*",
-      "search-application-templates/*/*"
+      "application-templates/*/*"
     ]
   },
   "repository": {

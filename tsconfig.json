@@ -6,7 +6,7 @@
     "outDir": "packages/connect-search-creator/build",
   },
   "exclude": [
-    "search-application-templates",
+    "application-templates",
     "node_modules"
   ]
 }
