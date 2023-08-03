@@ -1,5 +1,5 @@
 {
-  "name": "event",
+  "name": "incremental-updater",
   "version": "1.0.0",
   "type": "module",
   "main": "src/index.js",
@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/index.js",
     "start:dev": "node_modules/.bin/nodemon -q src/index.js",
-    "lint": "node_modules/.bin/eslint . --ext .js",
+    "lint": "node_modules/.bin/eslint src --ext .js",
     "prettier": "node_modules/.bin/prettier --write '**/*.{js,ts}'",
     "test": "node_modules/.bin/jest --config jest.config.cjs",
     "test:watch": "node_modules/.bin/jest --watch",

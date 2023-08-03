@@ -19,7 +19,7 @@ yarn-error.log*
 **/.DS_Store
 coverage/
 
-application-templates/**/yarn.lock
+incremental-updater/**/yarn.lock
 
 # Cache
 .dccache
@@ -32,6 +32,6 @@ application-templates/**/yarn.lock
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-application-templates/starter-typescript/job/.env
-application-templates/starter-typescript/job/.env.*
-!application-templates/starter-typescript/job/.env.example
+incremental-updater/starter-typescript/job/.env
+incremental-updater/starter-typescript/job/.env.*
+!incremental-updater/starter-typescript/job/.env.example
