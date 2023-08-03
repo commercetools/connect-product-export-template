@@ -3,6 +3,8 @@
 
 # Dependency directories
 node_modules/
+
+# Cache
 .dccache
 
 # Build
@@ -20,9 +22,6 @@ yarn-error.log*
 coverage/
 
 incremental-updater/**/yarn.lock
-
-# Cache
-.dccache
 
 # Yarn
 .pnp.*
