@@ -1,0 +1,19 @@
+deployAs:
+  - name: full-ingestion
+    applicationType: service
+    endpoint: /
+    scripts:
+      postDeploy: npm install
+    configuration:
+      securedConfiguration:
+        - key: COMMERCETOOLS_STORE_ID
+          description: Unique identifier of Commercetools Store
+  - name: incremental-updater
+    applicationType: event
+    endpoint: /
+    scripts:
+      postDeploy: npm install
+    configuration:
+      securedConfiguration:
+        - key: COMMERCETOOLS_STORE_ID
+          description: Unique identifier of Commercetools Store
