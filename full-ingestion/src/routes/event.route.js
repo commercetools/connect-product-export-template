@@ -4,6 +4,6 @@ import { eventHandler } from '../controllers/event.controller.js';
 
 const eventRouter = Router();
 
-eventRouter.post('/', eventHandler);
+eventRouter.post('/:id', eventHandler);
 
 export default eventRouter;
