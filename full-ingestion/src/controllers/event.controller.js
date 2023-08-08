@@ -3,7 +3,7 @@ import { createApiRoot } from '../clients/create.client.js';
 import CustomError from '../errors/custom.error.js';
 import { Process as process } from '@commercetools/sdk-client-v2';
 import { default as productMapping } from '../extensions/algolia-example/mappers/product.mapper.js';
-import { default as saveProducts } from '../extensions/algolia-example/clients/algolia.client.js';
+import { default as saveProducts } from '../extensions/algolia-example/clients/client.js';
 
 // async function getProductsByProductSelection(productSelectionId)  {
 //
@@ -21,50 +21,49 @@ import { default as saveProducts } from '../extensions/algolia-example/clients/a
 //
 // }
 
-async function getProductsByProcess() {
-  const request = await createApiRoot().products().get().request;
-
-  const processFn = (data) => {
-    const results = data.body.results;
-
+async function syncProcess(data) {
+  const results = data.body.results;
+  if (results) {
     const mappedProducts = results.map((product) => productMapping(product));
     saveProducts(mappedProducts);
-  };
-  const opt = {
-    accumulate: false, // accumulate all the processed result into an array, default `true`
-  };
-
-  return await process(request, processFn, opt);
+  }
 }
 
-// async function getProductsByStoreId(storeId)  {
-//   try {
-//     const store = await createApiRoot()
-//         .stores()
-//         .withId({ ID: Buffer.from(storeId).toString() })
-//         .get({
-//           queryArgs : {
-//             expand : 'productSelections[*].productSelection'
-//           }
-//         })
-//         .execute();
-//
-//
-//
-//     const productSelections = store.body.productSelections
-//     const stream =
-//         await Promise.all(_.chain(productSelections)
-//         .map(productSelectionItem => productSelectionItem.productSelection.id)
-//         .map(async productSelectionId => {
-//           return await getProductsByProductSelection(productSelectionId)
-//         }))
-//     stream.map(item => console.log(item));
-//
-//
-//   } catch (error) {
-//     throw new CustomError(400, `Bad request: ${error}`);
-//   }
-// }
+async function syncProducts(storeId) {
+  const productSelections = await getProductSelectionsByStoreId(storeId)
+
+  productSelections.map(async (productionSelecton) =>  {
+    const productSelectionId = productionSelecton.productSelection.id
+    const request = await createApiRoot()
+        .productSelections()
+        .withId({ ID: Buffer.from(productSelectionId).toString() })
+        .products()
+        .get({ queryArgs: { sort: 'sort' } }).request
+
+    await process(request, syncProcess, {
+      accumulate: false
+    });
+  })
+}
+
+async function getProductSelectionsByStoreId(storeId)  {
+  return await createApiRoot()
+    .stores()
+    .withId({ ID: Buffer.from(storeId).toString() })
+    .get({
+      queryArgs : {
+        expand : 'productSelections[*].productSelection'
+      }
+    })
+    .execute()
+    .then(response =>
+      response.body.productSelections
+   )
+    .catch(error => {
+      throw new CustomError(400, `Bad request: ${error}`);
+    });
+
+}
 
 export const eventHandler = async (request, response) => {
   // Check request body
@@ -79,9 +78,9 @@ export const eventHandler = async (request, response) => {
     throw new CustomError(400, 'Bad request: Wrong Pub/Sub message format');
   }
 
-  // const storeId = request.params.id
+  const storeId = request.params.id
 
-  await getProductsByProcess();
+  await syncProducts(storeId);
 
   // Return the response for the client
   response.status(204).send();
