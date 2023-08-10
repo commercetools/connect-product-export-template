@@ -17,7 +17,12 @@ async function getProductsByStore(storeKey) {
     .productSelectionAssignments()
     .get({
       queryArgs: {
-        expand: 'product',
+        expand: [
+          'product',
+          'product.productType',
+          'product.taxCategory',
+          'product.masterData.current.categories[*]',
+        ],
       },
     })
     .execute()
@@ -45,11 +50,10 @@ export const eventHandler = async (request, response) => {
       throw new CustomError(400, 'Bad request: Wrong Pub/Sub message format');
     }
 
-    const storeKey = request.params.id;
+    const storeKey = request.params.storeKey;
     await syncProducts(storeKey);
   } catch (err) {
     logger.error(err);
-
     return response.status(err.statusCode).send(err);
   }
 
