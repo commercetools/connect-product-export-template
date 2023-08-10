@@ -34,23 +34,15 @@ async function getProductsByStore(storeKey) {
 }
 
 export const eventHandler = async (request, response) => {
-  // Check request body
   try {
-    if (!request.body) {
-      logger.error('Missing request body.');
+    const storeKey = request.params.storeKey;
+    if (!storeKey) {
+      logger.error('Missing store key in query parameter.');
       throw new CustomError(
         400,
-        'Bad request: No Pub/Sub message was received'
+        'Bad request: No store key is defined in query parameter'
       );
     }
-
-    // Check if the body comes in a message
-    if (!request.body.message) {
-      logger.error('Missing body message');
-      throw new CustomError(400, 'Bad request: Wrong Pub/Sub message format');
-    }
-
-    const storeKey = request.params.storeKey;
     await syncProducts(storeKey);
   } catch (err) {
     logger.error(err);
