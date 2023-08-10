@@ -9,7 +9,7 @@ function loadConfig() {
 }
 
 export const config = {
-  applicationId: loadConfig().applicationId,
-  searchApiKey: loadConfig().searchApiKey,
-  index: loadConfig().index,
+  applicationId: loadConfig()?.applicationId,
+  searchApiKey: loadConfig()?.searchApiKey,
+  index: loadConfig()?.index,
 };
