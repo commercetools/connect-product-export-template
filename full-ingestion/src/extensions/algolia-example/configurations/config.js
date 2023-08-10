@@ -1,5 +1,15 @@
+function loadConfig() {
+  try {
+    return JSON.parse(process.env.SEARCH_PLATFORM_CONFIG);
+  } catch (e) {
+    throw new Error(
+      'Search platform configuration is not provided in the JSON format'
+    );
+  }
+}
+
 export const config = {
-  applicationId: process.env.AGOLIA_APPLICATION_ID,
-  searchApiKey: process.env.AGOLIA_SEARCH_API_KEY,
-  index: process.env.AGOLIA_INDEX,
+  applicationId: loadConfig().applicationId,
+  searchApiKey: loadConfig().searchApiKey,
+  index: loadConfig().index,
 };

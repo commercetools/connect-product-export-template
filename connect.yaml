@@ -18,6 +18,8 @@ deployAs:
           description: Commercetools client scope
         - key: CTP_REGION
           description: Region of Commercetools project
+        - key: SEARCH_PLATFORM_CONFIG
+          description: Escaped JSON object including credentails to search platform and other settings
   - name: incremental-updater
     applicationType: event
     endpoint: /
