@@ -25,10 +25,19 @@ jobs:
       run:
         working-directory: full-ingestion
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Use Node.js 16.x
         uses: actions/setup-node@v3
         with:
           node-version: '16.x'
-      - run: npm ci
-      - run: npm run lint && npm run prettier
+
+      - name: Install modules
+        run: npm ci
+
+      - name: Check the coding style
+        run: npm run lint && npm run prettier
+
+      - name: Execute integration test
+        run: npm run test
