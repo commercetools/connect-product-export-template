@@ -55,7 +55,7 @@ async function getProductsByStore(storeKey) {
   return allProducts;
 }
 
-export const eventHandler = async (request, response) => {
+export const syncHandler = async (request, response) => {
   try {
     const storeKey = request.params.storeKey;
     if (!storeKey) {
