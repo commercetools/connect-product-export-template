@@ -4,7 +4,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 
 // Import routes
-import EventRoutes from './routes/event.route.js';
+import SyncRoutes from './routes/sync.route.js';
 import { logger } from './utils/logger.utils.js';
 
 const PORT = 8080;
@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Define routes
-app.use('/', EventRoutes);
+app.use('/', SyncRoutes);
 
 // Listen the application
 const server = app.listen(PORT, () => {
