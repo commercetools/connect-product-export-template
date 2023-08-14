@@ -21,6 +21,13 @@ jobs:
   build-full-ingestion:
     name: Build the application for full-ingestion
     runs-on: ubuntu-latest
+    env:
+      CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
+      CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
+      CTP_PROJECT_KEY: ${{ secrets.CTP_PROJECT_KEY }}
+      CTP_SCOPE: ${{ secrets.CTP_SCOPE }}
+      CTP_REGION: ${{ secrets.CTP_REGION }}
+      SEARCH_PLATFORM_CONFIG: ${{ secrets.SEARCH_PLATFORM_CONFIG }}
     defaults:
       run:
         working-directory: full-ingestion
