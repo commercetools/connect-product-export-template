@@ -4,6 +4,6 @@ import { eventHandler } from '../controllers/event.controller.js';
 
 const eventRouter = Router();
 
-eventRouter.post('/:storeKey', eventHandler);
+eventRouter.post('/fullSync/:storeKey', eventHandler);
 
 export default eventRouter;
