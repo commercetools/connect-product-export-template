@@ -21,23 +21,31 @@ async function eventHandler(request, response) {
     throw new CustomError(400, 'Bad request: Wrong No Pub/Sub message format');
   }
 
-  // TODO : Investigate how to determine the source subscription of the message (store? product-selection? product?)
-  const message = request.body.message;
-  switch (message?.source) {
-    case 'store':
-      await storeEventHandler(request, response);
-      break;
-    case 'product-selection':
-      await productSelectionEventHandler(request, response);
-      break;
-    case 'product':
-      await productEventHandler(request, response);
-      break;
-    default:
-      throw new CustomError(
-        400,
-        'Bad request: Message queue name is not defined'
-      );
+  const encodedMessageBody = request.body?.message?.data;
+  if (encodedMessageBody) {
+    const buff = new Buffer(encodedMessageBody, 'base64');
+    const messageBody = JSON.parse(buff.toString('ascii'));
+
+    const resourceType = messageBody?.resource?.typeId;
+
+    switch (resourceType) {
+      case 'store':
+        await storeEventHandler(request, response);
+        break;
+      case 'product-selection':
+        await productSelectionEventHandler(request, response);
+        break;
+      case 'product':
+        await productEventHandler(request, response);
+        break;
+      default:
+        throw new CustomError(
+          400,
+          'Bad request: Resource type is not defined in incoming message data'
+        );
+    }
+  } else {
+    throw new CustomError(400, 'Bad request: message data is not defined');
   }
 }
 
