@@ -7,6 +7,7 @@ export async function createChangedStoreSubscription(
     topicName,
     projectId
 ) {
+    console.log('###############')
     const {
         body: { results: subscriptions },
     } = await apiRoot
@@ -31,7 +32,8 @@ export async function createChangedStoreSubscription(
             })
             .execute();
     }
-
+    console.log(topicName)
+    console.log(projectId)
     await apiRoot
         .subscriptions()
         .post({

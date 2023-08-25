@@ -1,4 +1,4 @@
-import { createApiRoot } from '../client/create.client.js';
+import { createApiRoot } from '../clients/create.client.js';
 import { createChangedStoreSubscription } from './actions.js';
 
 
@@ -9,6 +9,8 @@ async function postDeploy(properties) {
     const topicName = properties.get(CONNECT_GCP_TOPIC_NAME_KEY);
     const projectId = properties.get(CONNECT_GCP_PROJECT_ID_KEY);
 
+    console.log(topicName)
+    console.log(projectId)
     // assertString(topicName, CONNECT_GCP_TOPIC_NAME_KEY);
     // assertString(projectId, CONNECT_GCP_PROJECT_ID_KEY);
 
@@ -19,6 +21,7 @@ async function postDeploy(properties) {
 async function run() {
     try {
         const properties = new Map(Object.entries(process.env));
+        console.log(properties)
         await postDeploy(properties);
     } catch (error) {
         process.stderr.write(`Post-deploy failed: ${error.message}\n`);
