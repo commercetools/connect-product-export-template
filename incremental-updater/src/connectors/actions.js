@@ -1,11 +1,7 @@
 const STORE_PRODUCT_CHANGE_SUBSCRIPTION_KEY =
   'store-product-change-subscription';
 
-export async function createChangedStoreSubscription(
-  apiRoot,
-  topicName,
-  projectId
-) {
+export async function deleteChangedStoreSubscription(apiRoot) {
   const {
     body: { results: subscriptions },
   } = await apiRoot
@@ -30,6 +26,14 @@ export async function createChangedStoreSubscription(
       })
       .execute();
   }
+}
+
+export async function createChangedStoreSubscription(
+  apiRoot,
+  topicName,
+  projectId
+) {
+  await deleteChangedStoreSubscription(apiRoot);
 
   await apiRoot
     .subscriptions()

@@ -55,7 +55,7 @@ async function eventHandler(request, response) {
     }
   } catch (err) {
     logger.error(err);
-    return response.status(err.statusCode).send(err);
+    return response.status(err.statusCode).send();
   }
 }
 
