@@ -34,7 +34,6 @@ async function eventHandler(request, response) {
     const messageBody = JSON.parse(buff.toString('ascii'));
 
     const resourceType = messageBody?.resource?.typeId;
-
     switch (resourceType) {
       case 'store':
         await storeEventHandler(request, response);
@@ -44,6 +43,9 @@ async function eventHandler(request, response) {
         break;
       case 'product':
         await productEventHandler(request, response);
+        break;
+      case 'subscription': // Handle the ack once subscription is created after deployment
+        response.status(204).send();
         break;
       default:
         throw new CustomError(
