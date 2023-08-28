@@ -1,5 +1,4 @@
-const STORE_PRODUCT_CHANGE_SUBSCRIPTION_KEY =
-  'store-product-change-subscription';
+const STORE_PRODUCT_CHANGE_SUBSCRIPTION_KEY = 'your-subscription';
 
 export async function deleteChangedStoreSubscription(apiRoot) {
   const {
@@ -45,15 +44,23 @@ export async function createChangedStoreSubscription(
           topic: topicName,
           projectId,
         },
-        changes: [
-          {
-            resourceTypeId: 'product',
-          },
+        messages: [
           {
             resourceTypeId: 'product-selection',
+            types: [
+              'ProductSelectionProductAdded',
+              'ProductSelectionProductRemoved',
+              'ProductSelectionVariantSelectionChanged',
+            ],
           },
           {
             resourceTypeId: 'store',
+            types: ['StoreProductSelectionsChanged'],
+          },
+        ],
+        changes: [
+          {
+            resourceTypeId: 'product',
           },
         ],
       },
