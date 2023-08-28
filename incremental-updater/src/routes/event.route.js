@@ -5,6 +5,7 @@ import { eventHandler as productSelectionEventHandler } from '../controllers/pro
 import { eventHandler as productEventHandler } from '../controllers/product.event.controller.js';
 import CustomError from '../errors/custom.error.js';
 import { logger } from '../utils/logger.utils.js';
+import { decodeToJson } from '../utils/decoder.utils.js';
 
 const eventRouter = Router();
 
@@ -29,9 +30,7 @@ async function eventHandler(request, response) {
     }
 
     const encodedMessageBody = request.body.message.data;
-
-    const buff = new Buffer(encodedMessageBody, 'base64');
-    const messageBody = JSON.parse(buff.toString('ascii'));
+    const messageBody = decodeToJson(encodedMessageBody);
 
     const resourceType = messageBody?.resource?.typeId;
     switch (resourceType) {
