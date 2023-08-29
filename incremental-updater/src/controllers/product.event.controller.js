@@ -2,7 +2,10 @@ import { decodeToJson } from '../utils/decoder.utils.js';
 import CustomError from '../errors/custom.error.js';
 import { createApiRoot } from '../../src/clients/create.client.js';
 import { logger } from '../utils/logger.utils.js';
-import { default as saveProducts } from '../extensions/algolia-example/clients/client.js';
+import {
+  default as saveProducts,
+  remove as removeProduct,
+} from '../extensions/algolia-example/clients/client.js';
 
 const CHUNK_SIZE = 100;
 
@@ -43,12 +46,18 @@ async function saveChangedProductToExtSearchIndex(productId) {
     );
   } else {
     logger.info(
-      `Updated product with id ${productId} belongs to the current store ${process.env.CTP_STORE_KEY}. Sync action is going to be performed now.`
+      `Modified product with id ${productId} belongs to the current store ${process.env.CTP_STORE_KEY}. Sync action is going to be performed now.`
     );
-    // TODO : save product to external search index with version ID in CTP product resource
     await saveProducts(productChunk);
+    logger.info(`Product ${productId} has been synced.`);
   }
 }
+
+async function saveDeletedProductToExtSearchIndex(productId) {
+  await removeProduct(productId);
+  logger.info(`Product ${productId} has been removed.`);
+}
+
 export const eventHandler = async (request, response) => {
   // Receive the Pub/Sub message
   const encodedMessageBody = request.body.message.data;
@@ -57,6 +66,9 @@ export const eventHandler = async (request, response) => {
   if (messageBody) {
     const notificationType = messageBody.notificationType;
     const productId = messageBody.resource.id;
+    logger.info(
+      `sync product ${productId} with notification type ${notificationType}`
+    );
     switch (notificationType) {
       case 'ResourceUpdated':
         await saveChangedProductToExtSearchIndex(productId);
@@ -65,6 +77,7 @@ export const eventHandler = async (request, response) => {
         await saveChangedProductToExtSearchIndex(productId);
         break;
       case 'ResourceDeleted':
+        await saveDeletedProductToExtSearchIndex(productId);
         break;
       default:
         throw new CustomError(
