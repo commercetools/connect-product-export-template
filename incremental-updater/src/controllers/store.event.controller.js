@@ -2,23 +2,37 @@ import { decodeToJson } from '../utils/decoder.utils.js';
 import { logger } from '../utils/logger.utils.js';
 import CustomError from '../errors/custom.error.js';
 import { getProductsByProductSelectionId } from '../clients/query.client.js';
+import {
+  default as saveProducts,
+  remove as removeProduct,
+} from '../extensions/algolia-example/clients/client.js';
 
-// async function syncUpdatedProductSelection(updatedProductSelections) {
-//   if (updatedProductSelections) {
-//     updatedProductSelections
-//         .filter(productSelection => productSelection?.productSelection?.typeId==='product-selection')
-//         .filter(productSelection => productSelection?.productSelection?.typeId==='product-selection')
-//         .map(productSelection => {
-//
-//       console.log(productSelection.productSelection?.id)
-//     })
-//   }
-// }
 
-async function getRemovedProducts(removedProductSelection) {
-  const removedProducts = (
+async function syncUpdatedProductSelection(updatedProductSelections) {
+  logger.info(`Checking if product selections are activated / deactivated.`);
+  if (updatedProductSelections) {
+    const activatedProductSelections  = updatedProductSelections.filter((productSelection) =>
+        productSelection.active === true)
+    const deactivatedProductSelection  = updatedProductSelections.filter((productSelection) =>
+        productSelection.active === false)
+
+    if (activatedProductSelections) {
+      const addedProducts = await getProductsByProductSelection(activatedProductSelections);
+      await saveProducts(addedProducts);
+    }
+    if (deactivatedProductSelection) {
+      const removedProducts = await getProductsByProductSelection(deactivatedProductSelection);
+      for (let productToBeRemoved of removedProducts) {
+        await removeProduct(productToBeRemoved.id);
+      }
+    }
+  }
+}
+
+async function getProductsByProductSelection(changedProductSelection) {
+  const changedProducts = (
     await Promise.all(
-      removedProductSelection
+      changedProductSelection
         .filter(
           (productSelection) =>
             productSelection?.productSelection?.typeId === 'product-selection'
@@ -29,15 +43,31 @@ async function getRemovedProducts(removedProductSelection) {
         })
     )
   ).flat();
-  return removedProducts;
+  return changedProducts;
+}
+
+async function syncAddedProductSelection(addedProductSelection) {
+  logger.info(`Adding product selections.`);
+
+  const activatedProductSelections  = addedProductSelection.filter((productSelection) =>
+      productSelection.active === true)
+
+  if (activatedProductSelections.length>0) {
+    const addedProducts = await getProductsByProductSelection(addedProductSelection);
+    await saveProducts(addedProducts);
+  } else {
+    logger.info(`The changed product selections are not activated. No sync action is required.`);
+  }
 }
 
 async function syncRemovedProductSelection(removedProductSelection) {
   logger.info(`Removing product selections.`);
 
   if (removedProductSelection) {
-    await getRemovedProducts(removedProductSelection);
-    // TODO : parse the removedProducts to search index for product removal
+    const removedProducts = await getProductsByProductSelection(removedProductSelection);
+    for (let productToBeRemoved of removedProducts) {
+      await removeProduct(productToBeRemoved.id);
+    }
   }
 }
 
@@ -54,16 +84,11 @@ export const eventHandler = async (request, response) => {
         `Product selection within store ${storeId} has been changed.`
       );
       if (messageBody.updatedProductSelections) {
-        // TODO : Check product selection is activated / deactivated
-        //await syncUpdatedProductSelection(messageBody.updatedProductSelections)
-        logger.info(
-          `Checking if product selections are activated / deactivated.`
-        );
+        await syncUpdatedProductSelection(messageBody.updatedProductSelections);
       } else if (messageBody.removedProductSelections) {
         await syncRemovedProductSelection(messageBody.removedProductSelections);
       } else if (messageBody.addedProductSelections) {
-        // TODO : Add products within the deleted product selections
-        logger.info(`Adding product selections`);
+        await syncAddedProductSelection(messageBody.addedProductSelections);
       } else {
         throw new CustomError(
           500,
