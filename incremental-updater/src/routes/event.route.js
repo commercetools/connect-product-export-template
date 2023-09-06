@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { eventHandler as storeEventHandler } from '../controllers/store.event.controller.js';
+// import { eventHandler as storeEventHandler } from '../controllers/store.event.controller.js';
 import { eventHandler as productSelectionEventHandler } from '../controllers/product-selection.event.controller.js';
 import { eventHandler as productEventHandler } from '../controllers/product.event.controller.js';
 import CustomError from '../errors/custom.error.js';
@@ -31,11 +31,11 @@ async function eventHandler(request, response) {
 
     const encodedMessageBody = request.body.message.data;
     const messageBody = decodeToJson(encodedMessageBody);
-
     const resourceType = messageBody?.resource?.typeId;
     switch (resourceType) {
       case 'store':
-        await storeEventHandler(request, response);
+        response.status(204).send();
+        // await storeEventHandler(request, response);
         break;
       case 'product-selection':
         await productSelectionEventHandler(request, response);
@@ -48,8 +48,8 @@ async function eventHandler(request, response) {
         break;
       default:
         throw new CustomError(
-          400,
-          'Bad request: Resource type is not defined in incoming message data'
+          202,
+          'Resource type is not defined in incoming message data'
         );
     }
   } catch (err) {

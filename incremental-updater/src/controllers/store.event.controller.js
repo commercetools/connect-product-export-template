@@ -1,7 +1,7 @@
 import { decodeToJson } from '../utils/decoder.utils.js';
 import { logger } from '../utils/logger.utils.js';
 import CustomError from '../errors/custom.error.js';
-import { getProductsByProductSelectionId } from '../clients/query.client.js';
+import { getProductsByProductSelectionId } from '../clients/store.query.client.js';
 import {
   default as saveProducts,
   remove as removeProduct,
