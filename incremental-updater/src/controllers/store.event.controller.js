@@ -1,112 +1,75 @@
 import { decodeToJson } from '../utils/decoder.utils.js';
 import { logger } from '../utils/logger.utils.js';
-import CustomError from '../errors/custom.error.js';
-import { getProductsByProductSelectionId } from '../clients/store.query.client.js';
+
+import {
+  getProductsByProductSelectionId,
+  getProductProjectionInStoreById,
+} from '../clients/store.query.client.js';
 import {
   default as saveProducts,
   remove as removeProduct,
 } from '../extensions/algolia-example/clients/client.js';
+import { HTTP_STATUS_SUCCESS_NO_CONTENT } from '../constants/http.status.constants.js';
+
+import { doValidation } from '../validators/store.validators.js';
+import CustomError from '../errors/custom.error.js';
 import {
   HTTP_STATUS_SUCCESS_ACCEPTED,
-  HTTP_STATUS_SUCCESS_NO_CONTENT,
+  HTTP_STATUS_RESOURCE_NOT_FOUND,
 } from '../constants/http.status.constants.js';
 
-async function getProductsByProductSelection(changedProductSelection) {
-  const changedProducts = (
+async function syncChangedProductSelections(changedProductSelections) {
+  const changedProductSelectionIds = changedProductSelections.map(
+    (removedProductSelection) => removedProductSelection.productSelection.id
+  );
+  logger.info(`Changed product selections [${changedProductSelectionIds}].`);
+
+  const productsInChangedProductSelection = (
     await Promise.all(
-      changedProductSelection
-        .filter(
-          (productSelection) =>
-            productSelection?.productSelection?.typeId === 'product-selection'
-        )
-        .map((productSelection) => productSelection.productSelection?.id)
-        .map(async (productSelectionId) => {
-          return await getProductsByProductSelectionId(productSelectionId);
-        })
+      changedProductSelections.map(
+        async (changedProductSelection) =>
+          await getProductsByProductSelectionId(
+            changedProductSelection?.productSelection.id
+          )
+      )
     )
   ).flat();
-  return changedProducts;
-}
-
-async function syncUpdatedProductSelection(updatedProductSelections) {
-  logger.info(`Checking if product selections are activated / deactivated.`);
-  if (updatedProductSelections) {
-    const activatedProductSelections = updatedProductSelections.filter(
-      (productSelection) => productSelection.active === true
-    );
-    const deactivatedProductSelection = updatedProductSelections.filter(
-      (productSelection) => productSelection.active === false
-    );
-
-    if (activatedProductSelections) {
-      const addedProducts = await getProductsByProductSelection(
-        activatedProductSelections
-      );
-      await saveProducts(addedProducts);
-    }
-    if (deactivatedProductSelection) {
-      const removedProducts = await getProductsByProductSelection(
-        deactivatedProductSelection
-      );
-      for (let productToBeRemoved of removedProducts) {
-        await removeProduct(productToBeRemoved.id);
-      }
-    }
-  }
-}
-
-async function syncAddedProductSelection(addedProductSelection) {
-  logger.info(`Adding product selections.`);
-
-  const activatedProductSelections = addedProductSelection.filter(
-    (productSelection) => productSelection.active === true
+  console.log('##################');
+  console.log(
+    `productsInChangedProductSelection contains ${productsInChangedProductSelection.length} product(s)`
   );
-
-  if (activatedProductSelections.length > 0) {
-    const addedProducts = await getProductsByProductSelection(
-      addedProductSelection
+  let productsToBeSynced = [];
+  for (let productInChangedProductSelection of productsInChangedProductSelection) {
+    console.log(
+      `productInChangedProductSelection.id : ${productInChangedProductSelection.id}`
     );
-    await saveProducts(addedProducts);
-  } else {
+    let productToBeSynced = undefined;
+    productToBeSynced = await getProductProjectionInStoreById(
+      productInChangedProductSelection.id
+    ).catch(async (error) => {
+      // Product cannot be found in store assignment. Need to remove product in external search index
+      if (error.statusCode === HTTP_STATUS_RESOURCE_NOT_FOUND) {
+        console.log(
+          `Product not found in store: ${productInChangedProductSelection.id}`
+        );
+        await removeProduct(productInChangedProductSelection.id);
+      } else {
+        throw new CustomError(
+          HTTP_STATUS_SUCCESS_ACCEPTED,
+          error.message,
+          error
+        );
+      }
+    });
+
+    if (productToBeSynced)
+      productsToBeSynced = productsToBeSynced.concat(productToBeSynced);
+  }
+  if (productsToBeSynced.length > 0) {
     logger.info(
-      `The changed product selections are not activated. No sync action is required.`
+      `${productsToBeSynced.length} product(s) to be synced to search index.`
     );
-  }
-}
-
-async function syncRemovedProductSelection(removedProductSelection) {
-  logger.info(`Removing product selections.`);
-
-  if (removedProductSelection) {
-    const removedProducts = await getProductsByProductSelection(
-      removedProductSelection
-    );
-    for (let productToBeRemoved of removedProducts) {
-      await removeProduct(productToBeRemoved.id);
-    }
-  }
-}
-
-function doValidation(messageBody) {
-  const storeKey = messageBody.resourceUserProvidedIdentifiers?.key;
-  const type = messageBody.type;
-  if (!messageBody) {
-    throw new CustomError(
-      HTTP_STATUS_SUCCESS_ACCEPTED,
-      `The incoming message body is missing. No further action is required. `
-    );
-  }
-  if (storeKey !== process.env.CTP_STORE_KEY) {
-    throw new CustomError(
-      HTTP_STATUS_SUCCESS_ACCEPTED,
-      `The incoming message is about the change in store ${storeKey}. No further action is required. `
-    );
-  }
-  if (type !== 'StoreProductSelectionsChanged') {
-    throw new CustomError(
-      HTTP_STATUS_SUCCESS_ACCEPTED,
-      `The incoming message belongs to type ${type}. No further action is required. `
-    );
+    await saveProducts(productsToBeSynced);
   }
 }
 
@@ -117,17 +80,23 @@ export const eventHandler = async (request, response) => {
 
   doValidation(messageBody);
 
-  if (messageBody.updatedProductSelections) {
-    await syncUpdatedProductSelection(messageBody.updatedProductSelections);
-  } else if (messageBody.removedProductSelections) {
-    await syncRemovedProductSelection(messageBody.removedProductSelections);
-  } else if (messageBody.addedProductSelections) {
-    await syncAddedProductSelection(messageBody.addedProductSelections);
-  } else {
-    throw new CustomError(
-      HTTP_STATUS_SUCCESS_ACCEPTED,
-      `Unable to find suitable actions (addedProductSelections/removedProductSelections/updatedProductSelections) within StoreProductSelectionsChanged message.`
-    );
+  const type = messageBody.type;
+  let changedProductSelections = undefined;
+  if (messageBody.removedProductSelections)
+    changedProductSelections = messageBody.removedProductSelections;
+  else if (messageBody.addedProductSelections)
+    changedProductSelections = messageBody.addedProductSelections;
+  else if (messageBody.updatedProductSelections)
+    changedProductSelections = messageBody.updatedProductSelections;
+
+  switch (type) {
+    case 'StoreProductSelectionsChanged':
+      await syncChangedProductSelections(changedProductSelections);
+      break;
+    case 'test':
+      break;
+    default:
+      break;
   }
 
   // Return the response for the client

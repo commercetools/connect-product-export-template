@@ -134,9 +134,22 @@ const productQueryArgs = {
 //     });
 // };
 
-export const getProductsByProductSelectionId = async function (
-  productSelectionId
-) {
+export async function getProductProjectionInStoreById(productId) {
+  const queryArgs = productQueryArgs;
+  return await createApiRoot()
+    .inStoreKeyWithStoreKeyValue({
+      storeKey: Buffer.from(process.env.CTP_STORE_KEY).toString(),
+    })
+    .productProjections()
+    .withId({
+      ID: Buffer.from(productId).toString(),
+    })
+    .get({ queryArgs })
+    .execute()
+    .then((response) => response.body);
+}
+
+export async function getProductsByProductSelectionId(productSelectionId) {
   let lastProductId = undefined;
   let hasNextQuery = true;
   let allProducts = [];
@@ -157,7 +170,7 @@ export const getProductsByProductSelectionId = async function (
       .catch((error) => {
         throw new CustomError(
           HTTP_STATUS_SUCCESS_ACCEPTED,
-          ` ${error.message}`,
+          error.message,
           error
         );
       });
@@ -167,5 +180,9 @@ export const getProductsByProductSelectionId = async function (
       allProducts = allProducts.concat(productChunk);
     }
   }
+  console.log(
+    `${productSelectionId} contains ${allProducts.length} product(s)`
+  );
+  console.log(allProducts);
   return allProducts;
-};
+}
