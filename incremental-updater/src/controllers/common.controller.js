@@ -3,7 +3,7 @@ import {
   default as saveProducts,
   remove as removeProduct,
 } from '../extensions/algolia-example/clients/client.js';
-import { getProductProjectionInStoreById } from '../clients/product-selection.query.client.js';
+import { getProductProjectionInStoreById } from '../clients/common.query.client.js';
 
 export async function saveChangedProductToExtSearchIndex(productId) {
   const productProjectionToBeSynced = await getProductProjectionInStoreById(
