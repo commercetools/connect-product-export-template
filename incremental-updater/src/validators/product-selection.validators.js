@@ -1,6 +1,6 @@
 import CustomError from '../errors/custom.error.js';
 import { HTTP_STATUS_SUCCESS_ACCEPTED } from '../constants/http.status.constants.js';
-import { getCurrentStore } from '../clients/product-selection.query.client.js';
+import { getCurrentStoreByProductSelectionId } from '../clients/product-selection.query.client.js';
 
 export async function doValidation(messageBody) {
   const type = messageBody.type;
@@ -12,6 +12,7 @@ export async function doValidation(messageBody) {
     );
   }
 
+  // Make sure incoming message contains the action of product changes in product selections
   if (
     type !== 'ProductSelectionProductRemoved' &&
     type !== 'ProductSelectionProductAdded' &&
@@ -22,13 +23,17 @@ export async function doValidation(messageBody) {
       `The incoming message belongs to an incorrect type ${type}. No further action is required. `
     );
   }
+
+  // Make sure the changed product selection is assigned and active to current store
   const productSelectionIdFromMessage = messageBody.resource.id;
 
-  const store = await getCurrentStore(productSelectionIdFromMessage);
+  const store = await getCurrentStoreByProductSelectionId(
+    productSelectionIdFromMessage
+  );
   if (!store) {
     throw new CustomError(
       HTTP_STATUS_SUCCESS_ACCEPTED,
-      `The product selection in notification is not an active product selection of current store. No further action is required. `
+      `The product selection "${productSelectionIdFromMessage}" in notification is not assigned or active to current store "${process.env.CTP_STORE_KEY}". No further action is required. `
     );
   }
 }
