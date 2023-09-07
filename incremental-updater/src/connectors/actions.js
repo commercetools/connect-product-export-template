@@ -55,7 +55,11 @@ export async function createChangedStoreSubscription(
           },
           {
             resourceTypeId: 'store',
-            types: ['StoreProductSelectionsChanged'],
+            types: [
+              'StoreProductSelectionsChanged',
+              'StoreCreated',
+              'StoreDeleted',
+            ],
           },
         ],
         changes: [

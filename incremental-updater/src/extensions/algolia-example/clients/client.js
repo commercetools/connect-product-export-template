@@ -10,6 +10,12 @@ export const remove = async (objectID) => {
   await index.deleteObject(objectID);
 };
 
+export const removeProducts = async (objectIDs) => {
+  const client = algoliasearch(config.applicationId, config.searchApiKey);
+  const index = client.initIndex(config.index);
+  await index.deleteObjects(objectIDs);
+};
+
 export default async function save(products) {
   let productChunks = [];
 

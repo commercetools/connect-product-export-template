@@ -22,13 +22,15 @@ async function saveChangedProductToExtSearchIndex(productId) {
       `Modified product with id ${productId} belongs to the current store ${process.env.CTP_STORE_KEY}. Sync action is going to be performed.`
     );
     await saveProducts([productChunk]);
-    logger.info(`Product ${productId} has been synced.`);
+    logger.info(
+      `Product ${productId} has been updated/added to the search index.`
+    );
   }
 }
 
 async function saveDeletedProductToExtSearchIndex(productId) {
   await removeProduct(productId);
-  logger.info(`Product ${productId} has been removed.`);
+  logger.info(`Product ${productId} has been removed from the search index.`);
 }
 
 export const eventHandler = async (request, response) => {

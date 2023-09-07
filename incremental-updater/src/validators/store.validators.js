@@ -13,13 +13,13 @@ export function doValidation(messageBody) {
   if (storeKey !== process.env.CTP_STORE_KEY) {
     throw new CustomError(
       HTTP_STATUS_SUCCESS_ACCEPTED,
-      `The incoming message is about the change in store ${storeKey}. No further action is required. `
+      `The change in store "${storeKey}" is different from current store "${process.env.CTP_STORE_KEY}". No further action is required. `
     );
   }
   if (type !== 'StoreProductSelectionsChanged') {
     throw new CustomError(
       HTTP_STATUS_SUCCESS_ACCEPTED,
-      `The incoming message belongs to inappropriate type ${type}. No further action is required. `
+      `The incoming message belongs to inappropriate type "${type}". No further action is required. `
     );
   }
 

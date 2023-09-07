@@ -32,6 +32,7 @@ async function eventHandler(request, response) {
     const encodedMessageBody = request.body.message.data;
     const messageBody = decodeToJson(encodedMessageBody);
     const resourceType = messageBody?.resource?.typeId;
+
     switch (resourceType) {
       case 'store':
         await storeEventHandler(request, response);
