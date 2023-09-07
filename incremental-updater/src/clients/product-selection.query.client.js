@@ -25,11 +25,15 @@ export async function getProductProjectionInStoreById(productId) {
     .execute()
     .then((response) => response.body)
     .catch((error) => {
-      throw new CustomError(
-        HTTP_STATUS_SUCCESS_ACCEPTED,
-        `${error.message}`,
-        error
-      );
+      if (error.statusCode === 404) {
+        return undefined;
+      } else {
+        throw new CustomError(
+          HTTP_STATUS_SUCCESS_ACCEPTED,
+          error.message,
+          error
+        );
+      }
     });
 }
 
