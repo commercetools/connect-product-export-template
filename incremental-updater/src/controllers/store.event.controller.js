@@ -44,7 +44,7 @@ async function syncChangedProductSelections(messageBody) {
   ).flat();
 
   logger.info(
-    `The changed product selection contains ${productsInChangedProductSelection.length} product(s).`
+    `The changed product selection(s) contains ${productsInChangedProductSelection.length} product(s).`
   );
   let productsToBeSynced = [];
   let productIdsToBeRemoved = [];
@@ -58,6 +58,9 @@ async function syncChangedProductSelections(messageBody) {
         logger.info(
           `Product "${productInChangedProductSelection.id}" is not found in the current store. The changed product is going to be removed in search index.`
         );
+
+        // Check if product ID has already been existing in the list
+
         productIdsToBeRemoved = productIdsToBeRemoved.concat(
           productInChangedProductSelection.id
         );
@@ -70,14 +73,23 @@ async function syncChangedProductSelections(messageBody) {
       }
     });
 
-    if (productToBeSynced)
-      productsToBeSynced = productsToBeSynced.concat(productToBeSynced);
+    if (productToBeSynced) {
+      const isDuplicatedProduct =
+        productsToBeSynced.filter(
+          (product) => product.id === productToBeSynced.id
+        ).length > 0;
+      if (isDuplicatedProduct)
+        logger.info(`${productToBeSynced.id} is duplicated.`);
+      if (!isDuplicatedProduct)
+        productsToBeSynced = productsToBeSynced.concat(productToBeSynced);
+    }
   }
   if (productIdsToBeRemoved.length > 0) {
+    const productIdSetToBeRemoved = Array.from(new Set(productIdsToBeRemoved)); // Remove duplicated products obtained from the current store
     logger.info(
-      `${productIdsToBeRemoved.length} product(s) to be removed from search index.`
+      `${productIdSetToBeRemoved.length} product(s) to be removed from search index.`
     );
-    await removeProducts(productIdsToBeRemoved);
+    await removeProducts(productIdSetToBeRemoved);
     logger.info(`Product(s) has been removed from search index.`);
   }
   if (productsToBeSynced.length > 0) {
