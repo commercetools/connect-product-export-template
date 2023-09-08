@@ -18,6 +18,19 @@ import {
   HTTP_STATUS_RESOURCE_NOT_FOUND,
 } from '../constants/http.status.constants.js';
 
+async function getProductsByChangedProductSelections(changedProductSelections) {
+  return (
+    await Promise.all(
+      changedProductSelections.map(
+        async (changedProductSelection) =>
+          await getProductsByProductSelectionId(
+            changedProductSelection?.productSelection.id
+          )
+      )
+    )
+  ).flat();
+}
+
 async function syncChangedProductSelections(messageBody) {
   let changedProductSelections = undefined;
   if (messageBody.removedProductSelections)
@@ -32,16 +45,8 @@ async function syncChangedProductSelections(messageBody) {
   );
   logger.info(`Changed product selections [${changedProductSelectionIds}].`);
 
-  const productsInChangedProductSelection = (
-    await Promise.all(
-      changedProductSelections.map(
-        async (changedProductSelection) =>
-          await getProductsByProductSelectionId(
-            changedProductSelection?.productSelection.id
-          )
-      )
-    )
-  ).flat();
+  const productsInChangedProductSelection =
+    await getProductsByChangedProductSelections(changedProductSelections);
 
   logger.info(
     `The changed product selection(s) contains ${productsInChangedProductSelection.length} product(s).`
@@ -58,9 +63,6 @@ async function syncChangedProductSelections(messageBody) {
         logger.info(
           `Product "${productInChangedProductSelection.id}" is not found in the current store. The changed product is going to be removed in search index.`
         );
-
-        // Check if product ID has already been existing in the list
-
         productIdsToBeRemoved = productIdsToBeRemoved.concat(
           productInChangedProductSelection.id
         );
@@ -73,6 +75,7 @@ async function syncChangedProductSelections(messageBody) {
       }
     });
 
+    // Check if product ID has already been existing in the list
     if (productToBeSynced) {
       const isDuplicatedProduct =
         productsToBeSynced.filter(
@@ -84,6 +87,7 @@ async function syncChangedProductSelections(messageBody) {
         productsToBeSynced = productsToBeSynced.concat(productToBeSynced);
     }
   }
+
   if (productIdsToBeRemoved.length > 0) {
     const productIdSetToBeRemoved = Array.from(new Set(productIdsToBeRemoved)); // Remove duplicated products obtained from the current store
     logger.info(

@@ -8,6 +8,8 @@ export async function doValidation(messageBody) {
       `The incoming message body is missing. No further action is required. `
     );
   }
+
+  // Make sure incoming message contains correct notification type
   const notificationType = messageBody.notificationType;
   if (
     notificationType !== 'ResourceUpdated' &&
@@ -16,15 +18,16 @@ export async function doValidation(messageBody) {
   ) {
     throw new CustomError(
       HTTP_STATUS_SUCCESS_ACCEPTED,
-      ` Notification type ${notificationType} is not correctly defined`
+      ` Notification type ${notificationType} is incorrect.`
     );
   }
 
+  // Make sure incoming message contains the identifier of the changed product
   const productId = messageBody?.resource?.id;
   if (!productId) {
     throw new CustomError(
       HTTP_STATUS_SUCCESS_ACCEPTED,
-      ` No product ID is found in message`
+      ` No product ID is found in message.`
     );
   }
 }
