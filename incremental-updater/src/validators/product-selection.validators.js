@@ -26,7 +26,14 @@ export async function doValidation(messageBody) {
 
   // Make sure the changed product selection is assigned and active to current store
   const productSelectionIdFromMessage = messageBody.resource.id;
+  await validateProductSelectionAssignedToCurrentStore(
+    productSelectionIdFromMessage
+  );
+}
 
+async function validateProductSelectionAssignedToCurrentStore(
+  productSelectionIdFromMessage
+) {
   const store = await getCurrentStoreByProductSelectionId(
     productSelectionIdFromMessage
   );

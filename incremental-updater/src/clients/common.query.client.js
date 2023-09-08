@@ -1,6 +1,4 @@
 import { createApiRoot } from './create.client.js';
-import CustomError from '../errors/custom.error.js';
-import { HTTP_STATUS_SUCCESS_ACCEPTED } from '../constants/http.status.constants.js';
 
 export const CHUNK_SIZE = 100;
 export const productQueryArgs = {
@@ -22,12 +20,5 @@ export async function getProductProjectionInStoreById(productId) {
     })
     .get({ queryArgs })
     .execute()
-    .then((response) => response.body)
-    .catch((error) => {
-      throw new CustomError(
-        HTTP_STATUS_SUCCESS_ACCEPTED,
-        `${error.message}`,
-        error
-      );
-    });
+    .then((response) => response.body);
 }

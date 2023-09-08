@@ -1,10 +1,10 @@
 import { decodeToJson } from '../utils/decoder.utils.js';
 import { logger } from '../utils/logger.utils.js';
 
-import {
-  getProductsByProductSelectionId,
-  getProductProjectionInStoreById,
-} from '../clients/store.query.client.js';
+import { getProductsByProductSelectionId } from '../clients/store.query.client.js';
+
+import { getProductProjectionInStoreById } from '../clients/common.query.client.js';
+
 import {
   default as saveProducts,
   removeProducts,

@@ -4,24 +4,27 @@ import {
   remove as removeProduct,
 } from '../extensions/algolia-example/clients/client.js';
 import { getProductProjectionInStoreById } from '../clients/common.query.client.js';
+import { HTTP_STATUS_RESOURCE_NOT_FOUND } from '../constants/http.status.constants.js';
 
 export async function saveChangedProductToExtSearchIndex(productId) {
   const productProjectionToBeSynced = await getProductProjectionInStoreById(
     productId
-  );
+  ).catch(async (error) => {
+    if (error.statusCode === HTTP_STATUS_RESOURCE_NOT_FOUND) {
+      logger.info(
+        `The changed product "${productId}" is not assigned to the current store "${process.env.CTP_STORE_KEY}. Product(s) is going to be removed from search index.`
+      );
+      await removeProduct(productId);
+      logger.info(`Product "${productId}" has been removed.`);
+    }
+  });
 
-  if (!productProjectionToBeSynced) {
+  if (productProjectionToBeSynced) {
     logger.info(
-      `Updated product with id ${productId} doesn't belong to the current store ${process.env.CTP_STORE_KEY}. Product(s) is going to be removed from search index.`
-    );
-    await removeProduct(productId);
-    logger.info(`Product "${productId}" has been removed.`);
-  } else {
-    logger.info(
-      `Modified product with id ${productId} belongs to the current store ${process.env.CTP_STORE_KEY}. Sync action is going to be performed now.`
+      `The changed product "${productId}" is assigned to the current store ${process.env.CTP_STORE_KEY}. Sync action is going to be performed now.`
     );
     await saveProducts([productProjectionToBeSynced]);
-    logger.info(`Product ${productId} has been synced.`);
+    logger.info(`Product "${productId}" has been added/updated.`);
   }
 }
 

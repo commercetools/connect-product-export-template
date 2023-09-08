@@ -10,7 +10,7 @@ import {
   HTTP_STATUS_SUCCESS_ACCEPTED,
   HTTP_STATUS_BAD_REQUEST,
   HTTP_STATUS_SUCCESS_NO_CONTENT,
-} from '../constants/http.status.constants';
+} from '../constants/http.status.constants.js';
 
 const eventRouter = Router();
 
