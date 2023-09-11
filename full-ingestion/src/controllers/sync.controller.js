@@ -1,68 +1,83 @@
 import { logger } from '../utils/logger.utils.js';
-import { createApiRoot } from '../clients/create.client.js';
+import {
+  getProductsInCurrentStore,
+  getProductProjectionInStoreById,
+} from '../clients/query.client.js';
 import CustomError from '../errors/custom.error.js';
-import { default as saveProducts } from '../extensions/algolia-example/clients/client.js';
+import {
+  default as saveProducts,
+  removeProducts,
+} from '../extensions/algolia-example/clients/client.js';
+import {
+  HTTP_STATUS_RESOURCE_NOT_FOUND,
+  HTTP_STATUS_SUCCESS_ACCEPTED,
+  HTTP_STATUS_BAD_REQUEST,
+  HTTP_STATUS_SUCCESS_NO_CONTENT,
+} from '../constants/http.status.constants.js';
 
-const CHUNK_SIZE = 100;
+async function syncProducts() {
+  let productsToBeSynced = [];
+  const products = await getProductsInCurrentStore();
 
-async function syncProducts(storeKey) {
-  const products = await getProductsByStore(storeKey);
+  //Clean up search index before full sychronization
+  const productIdsToBeRemoved = products.map((product) => product.id);
+  await removeProducts(productIdsToBeRemoved);
 
-  await saveProducts(products).catch((error) => {
-    throw new CustomError(400, `Bad request: ${error.message}`, error);
-  });
-}
+  for (let productInCurrentStore of products) {
+    let productToBeSynced = undefined;
+    productToBeSynced = await getProductProjectionInStoreById(
+      productInCurrentStore.id
+    ).catch(async (error) => {
+      // Product cannot be found in store assignment. Need to remove product in external search index
+      if (error.statusCode === HTTP_STATUS_RESOURCE_NOT_FOUND) {
+        logger.info(
+          `Product "${productInCurrentStore.id}" is not found in the current store. The product will not be synchronized to the search index.`
+        );
+      } else {
+        throw new CustomError(
+          HTTP_STATUS_SUCCESS_ACCEPTED,
+          error.message,
+          error
+        );
+      }
+    });
 
-async function getProductsByStore(storeKey) {
-  let lastProductId = undefined;
-  let hasNextQuery = true;
-  let allProducts = [];
-
-  while (hasNextQuery) {
-    let queryArgs = {
-      limit: CHUNK_SIZE,
-      withTotal: false,
-      sort: 'product.id asc',
-      expand: [
-        'product',
-        'product.productType',
-        'product.taxCategory',
-        'product.masterData.current.categories[*]',
-      ],
-    };
-    if (lastProductId) {
-      queryArgs.where = `product(id>"${lastProductId}")`;
-    }
-
-    let productChunk = await createApiRoot()
-      .inStoreKeyWithStoreKeyValue({
-        storeKey: Buffer.from(storeKey).toString(),
-      })
-      .productSelectionAssignments()
-      .get({ queryArgs })
-      .execute()
-      .then((response) => response.body.results)
-      .then((results) => results.map((result) => result.product))
-      .catch((error) => {
-        throw new CustomError(400, `Bad request: ${error.message}`, error);
-      });
-    hasNextQuery = productChunk.length == CHUNK_SIZE;
-    if (productChunk.length > 0) {
-      lastProductId = productChunk[productChunk.length - 1].id;
-      allProducts = allProducts.concat(productChunk);
+    // Check if product ID has already been existing in the list
+    if (productToBeSynced) {
+      const isDuplicatedProduct =
+        productsToBeSynced.filter(
+          (product) => product.id === productToBeSynced.id
+        ).length > 0;
+      if (isDuplicatedProduct)
+        logger.info(`${productToBeSynced.id} is duplicated.`);
+      if (!isDuplicatedProduct)
+        productsToBeSynced = productsToBeSynced.concat(productToBeSynced);
     }
   }
-  return allProducts;
+
+  if (productsToBeSynced.length > 0) {
+    logger.info(
+      `${productsToBeSynced.length} product(s) to be synced to search index.`
+    );
+    await saveProducts(productsToBeSynced).catch((error) => {
+      throw new CustomError(
+        HTTP_STATUS_BAD_REQUEST,
+        `Bad request: ${error.message}`,
+        error
+      );
+    });
+    logger.info(`Product(s) has been added/updated to to search index.`);
+  }
 }
 
 export const syncHandler = async (request, response) => {
   try {
-    const storeKey = request.params.storeKey;
+    const storeKey = process.env.CTP_STORE_KEY;
     if (!storeKey) {
-      logger.error('Missing store key in query parameter.');
+      logger.error('Missing store key in environment variable CTP_STORE_KEY.');
       throw new CustomError(
-        400,
-        'Bad request: No store key is defined in query parameter'
+        HTTP_STATUS_BAD_REQUEST,
+        'Bad request: No store key is defined in environment variable CTP_STORE_KEY'
       );
     }
     await syncProducts(storeKey);
@@ -72,5 +87,5 @@ export const syncHandler = async (request, response) => {
   }
 
   // Return the response for the client
-  return response.status(204).send();
+  return response.status(HTTP_STATUS_SUCCESS_NO_CONTENT).send();
 };
