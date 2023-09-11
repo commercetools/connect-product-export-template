@@ -4,6 +4,6 @@ import { syncHandler } from '../controllers/sync.controller.js';
 
 const syncRouter = Router();
 
-syncRouter.post('/fullSync', syncHandler);
+syncRouter.post('/fullSync/:storeKey', syncHandler);
 
 export default syncRouter;

@@ -72,12 +72,12 @@ async function syncProducts() {
 
 export const syncHandler = async (request, response) => {
   try {
-    const storeKey = process.env.CTP_STORE_KEY;
+    const storeKey = request.params.storeKey;
     if (!storeKey) {
-      logger.error('Missing store key in environment variable CTP_STORE_KEY.');
+      logger.error('Missing store key in query parameter.');
       throw new CustomError(
         HTTP_STATUS_BAD_REQUEST,
-        'Bad request: No store key is defined in environment variable CTP_STORE_KEY'
+        'Bad request: No store key is defined in query parameter'
       );
     }
     await syncProducts(storeKey);
