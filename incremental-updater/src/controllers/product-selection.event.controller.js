@@ -1,16 +1,32 @@
+import { decodeToJson } from '../utils/decoder.utils.js';
+
+import { doValidation } from '../validators/product-selection.validators.js';
+import { HTTP_STATUS_SUCCESS_NO_CONTENT } from '../constants/http.status.constants.js';
+import {
+  saveChangedProductToExtSearchIndex,
+  saveDeletedProductToExtSearchIndex,
+} from './common.controller.js';
+
 export const eventHandler = async (request, response) => {
   // Receive the Pub/Sub message
-  const pubSubMessage = request.body.message;
+  const encodedMessageBody = request.body.message.data;
+  const messageBody = decodeToJson(encodedMessageBody);
+  await doValidation(messageBody);
 
-  const decodedData = pubSubMessage.data
-    ? Buffer.from(pubSubMessage.data, 'base64').toString().trim()
-    : undefined;
-
-  if (decodedData) {
-    // TODO : Synchronize change in commercetools platform to search engine.
-    // const jsonData = JSON.parse(decodedData);
+  const type = messageBody.type;
+  const productId = messageBody?.product?.id;
+  switch (type) {
+    case 'ProductSelectionVariantSelectionChanged':
+      await saveChangedProductToExtSearchIndex(productId);
+      break;
+    case 'ProductSelectionProductRemoved':
+      await saveDeletedProductToExtSearchIndex(productId);
+      break;
+    case 'ProductSelectionProductAdded':
+      await saveChangedProductToExtSearchIndex(productId);
+      break;
   }
 
   // Return the response for the client
-  response.status(204).send();
+  response.status(HTTP_STATUS_SUCCESS_NO_CONTENT).send();
 };

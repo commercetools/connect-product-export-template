@@ -5,6 +5,12 @@ import { eventHandler as productSelectionEventHandler } from '../controllers/pro
 import { eventHandler as productEventHandler } from '../controllers/product.event.controller.js';
 import CustomError from '../errors/custom.error.js';
 import { logger } from '../utils/logger.utils.js';
+import { decodeToJson } from '../utils/decoder.utils.js';
+import {
+  HTTP_STATUS_SUCCESS_ACCEPTED,
+  HTTP_STATUS_BAD_REQUEST,
+  HTTP_STATUS_SUCCESS_NO_CONTENT,
+} from '../constants/http.status.constants.js';
 
 const eventRouter = Router();
 
@@ -14,7 +20,7 @@ async function eventHandler(request, response) {
     if (!request.body) {
       logger.error('Missing request body.');
       throw new CustomError(
-        400,
+        HTTP_STATUS_BAD_REQUEST,
         'Bad request: No Pub/Sub message was received'
       );
     }
@@ -23,17 +29,15 @@ async function eventHandler(request, response) {
     if (!request.body.message || !request.body.message.data) {
       logger.error('Missing message data in incoming message');
       throw new CustomError(
-        400,
+        HTTP_STATUS_BAD_REQUEST,
         'Bad request: No message data in incoming message'
       );
     }
 
     const encodedMessageBody = request.body.message.data;
-
-    const buff = new Buffer(encodedMessageBody, 'base64');
-    const messageBody = JSON.parse(buff.toString('ascii'));
-
+    const messageBody = decodeToJson(encodedMessageBody);
     const resourceType = messageBody?.resource?.typeId;
+
     switch (resourceType) {
       case 'store':
         await storeEventHandler(request, response);
@@ -45,12 +49,12 @@ async function eventHandler(request, response) {
         await productEventHandler(request, response);
         break;
       case 'subscription': // Handle the ack once subscription is created after deployment
-        response.status(204).send();
+        response.status(HTTP_STATUS_SUCCESS_NO_CONTENT).send();
         break;
       default:
         throw new CustomError(
-          400,
-          'Bad request: Resource type is not defined in incoming message data'
+          HTTP_STATUS_SUCCESS_ACCEPTED,
+          'Resource type is not defined in incoming message data'
         );
     }
   } catch (err) {
@@ -59,6 +63,6 @@ async function eventHandler(request, response) {
   }
 }
 
-eventRouter.post('/', eventHandler);
+eventRouter.post('/deltaSync', eventHandler);
 
 export default eventRouter;

@@ -1,16 +1,38 @@
+import { decodeToJson } from '../utils/decoder.utils.js';
+import { logger } from '../utils/logger.utils.js';
+import { HTTP_STATUS_SUCCESS_NO_CONTENT } from '../constants/http.status.constants.js';
+import { doValidation } from '../validators/product.validators.js';
+import {
+  saveChangedProductToExtSearchIndex,
+  saveDeletedProductToExtSearchIndex,
+} from './common.controller.js';
+
 export const eventHandler = async (request, response) => {
   // Receive the Pub/Sub message
-  const pubSubMessage = request.body.message;
+  const encodedMessageBody = request.body.message.data;
+  const messageBody = decodeToJson(encodedMessageBody);
 
-  const decodedData = pubSubMessage.data
-    ? Buffer.from(pubSubMessage.data, 'base64').toString().trim()
-    : undefined;
+  if (messageBody) {
+    const notificationType = messageBody.notificationType;
+    const productId = messageBody.resource.id;
 
-  if (decodedData) {
-    // TODO : Synchronize change in commercetools platform to search engine.
-    // const jsonData = JSON.parse(decodedData);
+    await doValidation(messageBody);
+    logger.info(
+      `sync product ${productId} with notification type ${notificationType}`
+    );
+    switch (notificationType) {
+      case 'ResourceUpdated':
+        await saveChangedProductToExtSearchIndex(productId);
+        break;
+      case 'ResourceCreated':
+        await saveChangedProductToExtSearchIndex(productId);
+        break;
+      case 'ResourceDeleted':
+        await saveDeletedProductToExtSearchIndex(productId);
+        break;
+    }
   }
 
   // Return the response for the client
-  response.status(204).send();
+  response.status(HTTP_STATUS_SUCCESS_NO_CONTENT).send();
 };
