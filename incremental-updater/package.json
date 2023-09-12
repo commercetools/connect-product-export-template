@@ -11,8 +11,8 @@
     "prettier": "node_modules/.bin/prettier --write '**/*.{js,ts}'",
     "test": "node_modules/.bin/jest --config jest.config.cjs",
     "test:watch": "node_modules/.bin/jest --watch",
-    "connector:post-deploy": "node src/connector/post-deploy.js",
-    "connector:pre-undeploy": "node src/connector/pre-undeploy.js"
+    "connector:post-deploy": "node src/connectors/post-deploy.js",
+    "connector:pre-undeploy": "node src/connectors/pre-undeploy.js"
   },
   "author": "",
   "license": "MIT",
