@@ -1,5 +1,5 @@
 const decodeToString = (encodedMessageBody) => {
-  const buff = new Buffer(encodedMessageBody, 'base64');
+  const buff = Buffer.from(encodedMessageBody, 'base64');
   return buff.toString().trim();
 };
 
