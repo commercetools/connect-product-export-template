@@ -33,7 +33,7 @@ jobs:
         run: npm run lint && npm run prettier
 
       - name: Execute integration test
-        run: npm run test
+        run: npm run test-ci
 
   build-full-ingestion:
     name: Build the application for full-ingestion
@@ -64,4 +64,4 @@ jobs:
         run: npm run lint && npm run prettier
 
       - name: Execute integration test
-        run: npm run test
+        run: npm run test-ci
