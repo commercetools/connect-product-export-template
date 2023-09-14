@@ -26,7 +26,7 @@ async function syncProducts(storeKey) {
   for (let productInCurrentStore of products) {
     let productToBeSynced = undefined;
     productToBeSynced = await getProductProjectionInStoreById(
-        storeKey,
+      storeKey,
       productInCurrentStore.id
     ).catch(async (error) => {
       // Product cannot be found in store assignment. Need to remove product in external search index
