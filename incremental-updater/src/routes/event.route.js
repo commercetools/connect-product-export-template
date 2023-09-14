@@ -63,6 +63,6 @@ async function eventHandler(request, response) {
   }
 }
 
-eventRouter.post('/deltaSync', eventHandler);
+eventRouter.post('/', eventHandler);
 
 export default eventRouter;
