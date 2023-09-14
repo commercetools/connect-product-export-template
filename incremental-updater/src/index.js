@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Define routes
-app.use('/', EventRoutes);
+app.use('/deltaSync', EventRoutes);
 
 // Listen the application
 const server = app.listen(PORT, () => {

@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Define routes
-app.use('/', SyncRoutes);
+app.use('/fullSync', SyncRoutes);
 
 // Listen the application
 const server = app.listen(PORT, () => {
