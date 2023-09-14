@@ -10,10 +10,10 @@ const queryArgs = {
   expand: ['productSelection', 'taxCategory', 'productType', 'categories[*]'],
 };
 
-export async function getProductProjectionInStoreById(productId) {
+export async function getProductProjectionInStoreById(storeKey, productId) {
   return await createApiRoot()
     .inStoreKeyWithStoreKeyValue({
-      storeKey: Buffer.from(process.env.CTP_STORE_KEY).toString(),
+      storeKey: Buffer.from(storeKey).toString(),
     })
     .productProjections()
     .withId({
@@ -24,7 +24,7 @@ export async function getProductProjectionInStoreById(productId) {
     .then((response) => response.body);
 }
 
-export async function getProductsInCurrentStore() {
+export async function getProductsInCurrentStore(storeKey) {
   let lastProductId = undefined;
   let hasNextQuery = true;
   let allProducts = [];
@@ -36,7 +36,7 @@ export async function getProductsInCurrentStore() {
 
     let productChunk = await createApiRoot()
       .inStoreKeyWithStoreKeyValue({
-        storeKey: Buffer.from(process.env.CTP_STORE_KEY).toString(),
+        storeKey: Buffer.from(storeKey).toString(),
       })
       .productSelectionAssignments()
       .get({ queryArgs })
