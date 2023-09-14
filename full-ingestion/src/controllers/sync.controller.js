@@ -15,9 +15,9 @@ import {
   HTTP_STATUS_SUCCESS_NO_CONTENT,
 } from '../constants/http.status.constants.js';
 
-async function syncProducts() {
+async function syncProducts(storeKey) {
   let productsToBeSynced = [];
-  const products = await getProductsInCurrentStore();
+  const products = await getProductsInCurrentStore(storeKey);
 
   //Clean up search index before full sychronization
   const productIdsToBeRemoved = products.map((product) => product.id);
@@ -26,6 +26,7 @@ async function syncProducts() {
   for (let productInCurrentStore of products) {
     let productToBeSynced = undefined;
     productToBeSynced = await getProductProjectionInStoreById(
+      storeKey,
       productInCurrentStore.id
     ).catch(async (error) => {
       // Product cannot be found in store assignment. Need to remove product in external search index
