@@ -4,16 +4,23 @@ import {
   getProductProjectionInStoreById,
 } from '../clients/query.client.js';
 import CustomError from '../errors/custom.error.js';
-import {
-  default as saveProducts,
-  removeProducts,
-} from '../extensions/algolia-example/clients/client.js';
+
 import {
   HTTP_STATUS_RESOURCE_NOT_FOUND,
   HTTP_STATUS_SUCCESS_ACCEPTED,
   HTTP_STATUS_BAD_REQUEST,
   HTTP_STATUS_SUCCESS_NO_CONTENT,
 } from '../constants/http.status.constants.js';
+
+export async function saveProducts(productProjectionsToBeSaved) {
+  logger.info(`Save ${productProjectionsToBeSaved.length} product(s)`);
+  // TODO : Invoking save product function from custom modules in extension folder
+}
+
+export async function removeProducts(productIdsToBeRemoved) {
+  logger.info(`Remove  ${productIdsToBeRemoved.length} product(s)`);
+  // TODO : Invoking remove product function from custom modules in extension folder
+}
 
 async function syncProducts(storeKey) {
   let productsToBeSynced = [];
