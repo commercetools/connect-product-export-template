@@ -24,7 +24,6 @@ async function eventHandler(request, response) {
         'Bad request: No Pub/Sub message was received'
       );
     }
-
     // Check if the body comes in a message
     if (!request.body.message || !request.body.message.data) {
       logger.error('Missing message data in incoming message');
@@ -49,6 +48,7 @@ async function eventHandler(request, response) {
         await productEventHandler(request, response);
         break;
       case 'subscription': // Handle the ack once subscription is created after deployment
+        logger.info(`Created subscription in Commercetools`);
         response.status(HTTP_STATUS_SUCCESS_NO_CONTENT).send();
         break;
       default:
@@ -59,7 +59,8 @@ async function eventHandler(request, response) {
     }
   } catch (err) {
     logger.error(err);
-    return response.status(err.statusCode).send();
+    if (err.statusCode) return response.status(err.statusCode).send(err);
+    return response.status(500).send(err);
   }
 }
 

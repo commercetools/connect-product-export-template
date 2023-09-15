@@ -84,7 +84,8 @@ export const syncHandler = async (request, response) => {
     await syncProducts(storeKey);
   } catch (err) {
     logger.error(err);
-    return response.status(err.statusCode).send(err);
+    if (err.statusCode) return response.status(err.statusCode).send(err);
+    return response.status(500).send(err);
   }
 
   // Return the response for the client
