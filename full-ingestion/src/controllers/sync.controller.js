@@ -14,12 +14,12 @@ import {
 
 export async function saveProducts(productProjectionsToBeSaved) {
   logger.info(`Save ${productProjectionsToBeSaved.length} product(s)`);
-  // TODO : Invoking save product function from custom modules in extension folder
+  // Invoking save products function from search index SDK developed by customer.
 }
 
 export async function removeProducts(productIdsToBeRemoved) {
   logger.info(`Remove  ${productIdsToBeRemoved.length} product(s)`);
-  // TODO : Invoking remove product function from custom modules in extension folder
+  // Invoking remove products function from search index SDK developed by customer.
 }
 
 async function syncProducts(storeKey) {
