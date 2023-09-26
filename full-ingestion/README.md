@@ -1,0 +1,24 @@
+# Full Ingestion
+This module provides a REST-API hosted on Commercetools-provided infrastructure. Once the API is triggered, it exports all products under the specific store of the Commercetools project, and then import to the external search index.
+
+## Get started
+### Install your search-specific SDK 
+Assuming you have already published your developed SDK as a package to the npm registry, please run following npm command under full-ingestion folder to install the package.
+```
+$ npm install <your-search-index-sdk>
+```
+
+### Install dependencies
+```
+$ npm install
+```
+
+### Run integration test
+```
+$ npm run test:integration
+```
+
+### Run the application in local environment
+```
+$ npm run start
+```

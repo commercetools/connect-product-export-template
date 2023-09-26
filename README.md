@@ -9,6 +9,14 @@ This repository provides a template of search connector used in [connect service
 - Uses JSON formatted logger with log levels
 - Setup sample integration tests with [Jest](https://jestjs.io/) and [supertest](https://github.com/ladjs/supertest#readme)
 
+##Prerequisite
+#### Develop your search-specific SDK 
+To import the [Commercetools product projections]() to external search index, users need to develop their own SDK which is responsible mainly for the following tasks
+- Data Mapping: The custom SDK needs to transform the product projection objects from Commercetools structure to users-desired structure for the search index.
+- Data Persistence: The custom SDK is capable to save/remove product data to/from the specific search index. Please remind that the product data might not be saved into the external search index in a single shot. It is because of performance concern in case of huge amount of product projections exported from Commercetools platform.
+
+To install the custom SDK, please publish your developed SDK as a package to the npm registry, and run following npm command to install the package.
+
 ##Getting started
 The template contains two separated modules :
 - Full Ingestion : Provides a REST-API to users to export all products from specific store of a Commercetools project to external search index. 
@@ -19,7 +27,7 @@ Regarding the development of both modules, please refer to the following documet
 - Development of Incremental Updater
 
 ##Deployment Configuration
-In order to deploy your customized search connector application on commercetools provided infrastructure, it needs to reviewed by certification team. For details, please refer to [documentation about Commercetools Connect](https://docs.commercetools.com/connect/concepts)
+In order to deploy your customized search connector application on Commercetools-provided infrastructure, it needs to reviewed by certification team. For details, please refer to [documentation about Commercetools Connect](https://docs.commercetools.com/connect/concepts)
 In addition, in order to support connect service, the search connector template has a folder structure as listed below
 ```
 ├── full-ingestion
@@ -84,7 +92,7 @@ Here you can see the details about various variables in configuration
 - CTP_CLIENT_ID: The client ID of your Commercetools user account. It is used in Commercetools client to communicate with Commercetools platform via SDK.
 - CTP_CLIENT_SECRET: The client secret of Commercetools user account. It is used in Commercetools client to communicate with Commercetools platform via SDK.
 - CTP_SCOPE: The scope constrains the endpoints to which the Commercetools client has access, as well as the read/write access right to an endpoint.
-- CTP_REGION: As the Composable Commerce API is provided in six different region, it defines the region which your Commercetools user account belongs to.
+- CTP_REGION: As the Commercetools APIs are provided in six different region, it defines the region which your Commercetools user account belongs to.
 - SEARCH_PLATFORM_CONFIG: It defines the configurations required by the external search index, such as credentials, search index unique identifier, etc.
   Following is a sample JSON object of this variable.
   
