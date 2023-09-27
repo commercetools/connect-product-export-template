@@ -1,14 +1,14 @@
 # Incremental Updater
-This module provides an application hosted on Commercetools-provided infrastructure, which receives messages from Google Cloud Pub/Sub when product changes under specific [Composable Commerce Store](https://docs.commercetools.com/api/projects/stores) occur. 
+This module provides an application hosted on Commercetools-provided infrastructure, which receives messages from Google Cloud Pub/Sub when product changes under specific [Commercetools Store](https://docs.commercetools.com/api/projects/stores) occur. 
 
-The module also provides scripts for post-deployment and pre-undeployment action. After deployment via connect service completed, [Composable Commerce Subscription](https://docs.commercetools.com/api/projects/subscriptions) is created by post-deployment script which listen to any product changes under specific store.
-Once products in the store have been changed, the Composable Commerce Subscription sends message to Google Cloud Pub/Sub topic and then notify the incremental updater to handle the corresponding product changes.
+The module also provides scripts for post-deployment and pre-undeployment action. After deployment via connect service completed, [Commercetools Subscription](https://docs.commercetools.com/api/projects/subscriptions) is created by post-deployment script which listen to any product changes under specific store.
+Once products in the store have been changed, the Commercetools Subscription sends message to Google Cloud Pub/Sub topic and then notify the incremental updater to handle the corresponding product changes.
 
-The Composable Commerce Subscription would be cleared once the search connector is undeployed.
+The Commercetools Subscription would be cleared once the search connector is undeployed.
 
 ## Assumption
 #### Support single store
-Since search index in external platform is supposed to be store-specific, each deployed search connector handles product changes from single Composable Commerce Store. The key of Composable Commerce Store has to be defined as environment variable before deployment.
+Since search index in external platform is supposed to be store-specific, each deployed search connector handles product changes from single Commercetools Store. The key of Commercetools Store has to be defined as environment variable before deployment.
 
 For details how to set environment variables for search connector in non-local environment, please refer to [Deployment Configuration](../README.md#Deployment Configuration).  
 ## Get started
@@ -30,8 +30,8 @@ $ npm run test:integration
 ```
 $ npm run start
 ```
-#### Change the key of Composable Commerce Subscription
-Please specify your desired key for creation of Composable Commerce Subscription [here](https://github.com/commercetools/connect-search-ingestion-template/blob/c4f1a3e04988a4a44842d3e1607638c96983ef29/incremental-updater/src/connectors/actions.js#L1).
+#### Change the key of Commercetools Subscription
+Please specify your desired key for creation of Commercetools Subscription [here](https://github.com/commercetools/connect-search-ingestion-template/blob/c4f1a3e04988a4a44842d3e1607638c96983ef29/incremental-updater/src/connectors/actions.js#L1).
 
 ## Development in local environment
 Different from staging and production environments, in which the out-of-the-box settings and variables have been set by connect service during deployment, the search connector requires additional operations in local environment for development.
