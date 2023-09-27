@@ -12,12 +12,13 @@ Since search index in external platform is supposed to be store-specific, each d
 
 For details how to set environment variables for search connector in non-local environment, please refer to [Deployment Configuration](../README.md#Deployment Configuration).  
 ## Get started
+#### Change the key of Commercetools Subscription
+Please specify your desired key for creation of Commercetools Subscription [here](https://github.com/commercetools/connect-search-ingestion-template/blob/c4f1a3e04988a4a44842d3e1607638c96983ef29/incremental-updater/src/connectors/actions.js#L1).
 #### Install your search-specific SDK 
 Assuming you have already published your developed SDK as a package to the npm registry, please run following npm command under incremental-updater folder to install the package.
 ```
 $ npm install <your-search-index-sdk>
 ```
-
 #### Install dependencies
 ```
 $ npm install
@@ -30,8 +31,14 @@ $ npm run test:integration
 ```
 $ npm run start
 ```
-#### Change the key of Commercetools Subscription
-Please specify your desired key for creation of Commercetools Subscription [here](https://github.com/commercetools/connect-search-ingestion-template/blob/c4f1a3e04988a4a44842d3e1607638c96983ef29/incremental-updater/src/connectors/actions.js#L1).
+#### Run post-deploy script in local environment
+```
+$ npm run connector:post-deploy
+```
+#### Run pre-undeploy script in local environment
+```
+$ npm run connector:pre-undeploy
+```
 
 ## Development in local environment
 Different from staging and production environments, in which the out-of-the-box settings and variables have been set by connect service during deployment, the search connector requires additional operations in local environment for development.

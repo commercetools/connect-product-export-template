@@ -17,7 +17,10 @@ To import the [Commercetools Product Projections](https://docs.commercetools.com
 
 To install the custom SDK, please publish your developed SDK as a package to the npm registry, and run following npm command to install the package.
 
-### Define your 
+#### Create external search index
+Users are expected to create search index in external platform themselves. The search connector application does not create search index during the application running. Therefore, please provides details of the search index including its identity after it is created. Details of search index can be provided as environment variables `SEARCH_PLATFORM_CONFIG` when starting the deployment.
+For details about `SEARCH_PLATFORM_CONFIG`, please also read [Deployment Configuration](./README.md#Deployment Configuration).
+ 
 ##Getting started
 The template contains two separated modules :
 - Full Ingestion : Provides a REST-API to users to export all products from specific store of a Commercetools project to external search index. 
@@ -111,3 +114,6 @@ Here you can see the details about various variables in configuration
   ```
 - CTP_STORE_KEY : Only used in incremental updater. It specifies the key of Commercetools store so that connector can look up the modified product under the specific store in commercetools platform.
 
+##Recommendations
+#### Implement your own test cases
+We have provided simple integration test cases with [Jest](https://jestjs.io/) and [supertest](https://github.com/ladjs/supertest#readme). The implementation is under `test` folder in both `full-ingestion` and `incremental-updater` modules. It is recommended to implement further test cases based on your own needs to test your development. 
