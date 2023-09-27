@@ -5,10 +5,8 @@ import { getProductsByProductSelectionId } from '../clients/store.query.client.j
 
 import { getProductProjectionInStoreById } from '../clients/common.query.client.js';
 
-import {
-  default as saveProducts,
-  removeProducts,
-} from '../extensions/algolia-example/clients/client.js';
+import { saveProducts, removeProducts } from './common.controller.js';
+
 import { HTTP_STATUS_SUCCESS_NO_CONTENT } from '../constants/http.status.constants.js';
 
 import { doValidation } from '../validators/store.validators.js';
