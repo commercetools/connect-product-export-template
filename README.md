@@ -4,19 +4,20 @@ This repository provides a template of search connector used in [connect service
 ## Features
 - NodeJS supported.
 - Uses Express as web server framework.
-- Uses Commercetools SDK for the Commercetools-specific communication.
+- Uses [Commercetools SDK](https://docs.commercetools.com/sdk/js-sdk-getting-started) for the Commercetools-specific communication.
 - Includes local development utilities in npm commands to build, start, test, lint & prettify code.
 - Uses JSON formatted logger with log levels
 - Setup sample integration tests with [Jest](https://jestjs.io/) and [supertest](https://github.com/ladjs/supertest#readme)
 
 ##Prerequisite
 #### Develop your search-specific SDK 
-To import the [Commercetools product projections]() to external search index, users need to develop their own SDK which is responsible mainly for the following tasks
+To import the [Commercetools Product Projections](https://docs.commercetools.com/api/projects/productProjections) to external search index, users need to develop their own SDK which is responsible mainly for the following tasks
 - Data Mapping: The custom SDK needs to transform the product projection objects from Commercetools structure to users-desired structure for the search index.
 - Data Persistence: The custom SDK is capable to save/remove product data to/from the specific search index. Please remind that the product data might not be saved into the external search index in a single shot. It is because of performance concern in case of huge amount of product projections exported from Commercetools platform.
 
 To install the custom SDK, please publish your developed SDK as a package to the npm registry, and run following npm command to install the package.
 
+### Define your 
 ##Getting started
 The template contains two separated modules :
 - Full Ingestion : Provides a REST-API to users to export all products from specific store of a Commercetools project to external search index. 
