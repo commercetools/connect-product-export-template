@@ -19,6 +19,14 @@ $ npm run test:integration
 ```
 $ npm run start
 ```
+## Development
+
+#### Set the required environment variables
+
+Before starting the development, we advise users to create a .env file in order to help them in local development.
+      
+For that, we also have a template file .env.example with the required environement variables for the project to run successfuly. To make it work, rename the file from `.env.example` to `.env`. Remember to fill the variables with your values.
+
 #### Execute full synchronization
 After deployment by connect service or starting up the application in local environment, you can trigger the full synchronization by sending HTTP POST request to REST-API as below
 ```
