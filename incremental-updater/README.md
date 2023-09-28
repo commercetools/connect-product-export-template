@@ -51,9 +51,18 @@ When an event-type connector application is deployed via connect service, a GCP 
 For details, please refer to the [Overview of the GCP Pub/Sub service](https://cloud.google.com/pubsub/docs/pubsub-basics).
 
 #### Set the required environment variables
-After connect service created a Pub/Sub service in Google Cloud platform for staging and production deployment, connect service sets the Pub/Sub topic name and GCP project ID into environment variables. In contrast, you need to add them to environment variables in case of development in local server.
-Please execute the commands in the console of your local server to do this
+
+Before starting the development, we advise users to create a .env file in order to help them in local development.
+      
+For that, we also have a template file .env.example with the required environement variables for the project to run successfuly. To make it work, rename the file from `.env.example` to `.env`. Remember to fill the variables with your values.
+
+In addition, following two environment variables in `.env.example` are not needed to be provided by users during staging or production deployment. 
 ```
-$ export CONNECT_GCP_TOPIC_NAME=<your-gcp-topic-name>
-$ export CONNECT_GCP_PROJECT_ID=<your-gcp-project-id>
-```   
+CONNECT_GCP_TOPIC_NAME=<your-gcp-topic-name>
+CONNECT_GCP_PROJECT_ID=<your-gcp-project-id>
+```
+It is because they are only required in local development server. For staging or production environment, connect service sets the Pub/Sub topic name and GCP project ID into these environment variables automatically after the Pub/Sub service has been created in Google Cloud platform.
+
+   
+
+      
