@@ -1,5 +1,5 @@
 # Full Ingestion
-This module provides a REST-API hosted on Commercetools-provided infrastructure. Once the API is triggered, it exports all products under the specific store of the Commercetools project, and then import to the external search index.
+This module provides a REST-API hosted on commercetools-provided infrastructure. Once the API is triggered, it exports all products under the specific store of the commercetools project, and then import to the external search index.
 
 ## Get started
 #### Install your search-specific SDK 
@@ -36,4 +36,4 @@ curl
 --data ''
 
 ```
-Remind that you need to change the host name and append the key of Commercetools Store as query parameter in the URL.
+Remind that you need to change the host name and append the key of commercetools Store as query parameter in the URL.
