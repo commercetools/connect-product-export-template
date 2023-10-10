@@ -4,7 +4,7 @@ import { readConfiguration } from '../utils/config.utils.js';
 
 /**
  * Create client with apiRoot
- * apiRoot can now be used to build requests to de Composable Commerce API
+ * apiRoot can now be used to build requests to Composable Commerce API
  */
 export const createApiRoot = ((root) => () => {
   if (root) {
