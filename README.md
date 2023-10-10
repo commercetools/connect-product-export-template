@@ -12,13 +12,13 @@ This template uses the [Store](https://docs.commercetools.com/api/projects/store
 - Setup sample integration tests with [Jest](https://jestjs.io/) and [supertest](https://github.com/ladjs/supertest#readme)
 
 ## Prerequisite
-#### commercetools composable commerce API client
+#### 1. commercetools composable commerce API client
 Users are expected to create API client responsible for fetching product, store and product selection details from composable commerce project, API client should have enought scope to be able to do so. These API client details are taken as input as an environment variable/ configuration for connect. Details of compsable commerce project can be provided as environment variables (configuration for connect) `CTP_PROJECT_KEY` , `CTP_CLIENT_ID`, `CTP_CLIENT_SECRET`, `CTP_SCOPE`, `CTP_REGION`. For details, please read [Deployment Configuration](./README.md#Deployment Configuration).
 
-#### commercetools composable commerce Data setup
+#### 2. commercetools composable commerce Data setup
 Users are expected to create store and link product selection, accordingly linking products to corresponding product selection. The Store detail is taken as input as an environment variable / configuration for connect. Details of store can be provided as environment variables (configuration for connect) `CTP_STORE_KEY`. For details, please read [Deployment Configuration](./README.md#Deployment Configuration).
 
-#### external search index creation
+#### 3. external search index creation
 Users are expected to create search index in external search engine . The index details are taken as input as an environment variable / configuration for connect. Details of search index can be provided as environment variables (configuration for connect) `SEARCH_PLATFORM_CONFIG`.For details, please read [Deployment Configuration](./README.md#Deployment Configuration).
 
  
@@ -31,12 +31,12 @@ Regarding the development of both modules, please refer to the following documet
 - Development of Full Ingestion
 - Development of Incremental Updater
 
-#### Develop your search-specific needs 
+#### 1. Develop your search-specific needs 
 To import the [commercetools composable commerce Product Projections](https://docs.commercetools.com/api/projects/productProjections) to external search index, users need to extend this connector with the following tasks
 - Data Mapping: Implementaion to transform the product projection objects from commercetools structure to users-desired structure for the search index.
 - Data Persistence: Implementation to save/remove product data to the specific search index using libraries provided by external search product. Please remember that the product data might not be saved into the external search index in a single attempt, it should have needed retry and recovery mechanism.
 
-#### Register as connector in commercetools Connect
+#### 2. Register as connector in commercetools Connect
 Follow guidelines [here](https://docs.commercetools.com/connect/getting-started) to register the connector for public/private use.
 
 
