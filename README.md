@@ -40,7 +40,7 @@ To import the [commercetools composable commerce Product Projections](https://do
 Follow guidelines [here](https://docs.commercetools.com/connect/getting-started) to register the connector for public/private use.
 
 
-##Deployment Configuration
+## Deployment Configuration
 In order to deploy your customized search connector application on commercetools Connect, it needs be published. For details, please refer to [documentation about commercetools Connect](https://docs.commercetools.com/connect/concepts)
 In addition, in order to support connect, the search connector template has a folder structure as listed below
 ```
@@ -124,6 +124,6 @@ Here you can see the details about various variables in configuration
   ```
 - CTP_STORE_KEY : Only used in incremental updater. It specifies the key of commercetools store so that connector can look up the modified product under the specific store in commercetools platform.
 
-##Recommendations
+## Recommendations
 #### Implement your own test cases
 We have provided simple integration test cases with [Jest](https://jestjs.io/) and [supertest](https://github.com/ladjs/supertest#readme). The implementation is under `test` folder in both `full-ingestion` and `incremental-updater` modules. It is recommended to implement further test cases based on your own needs to test your development. 
