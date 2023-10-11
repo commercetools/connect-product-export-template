@@ -41,7 +41,7 @@ Follow guidelines [here](https://docs.commercetools.com/connect/getting-started)
 
 
 ## Deployment Configuration
-In order to deploy your customized search connector application on commercetools Connect, it needs be published. For details, please refer to [documentation about commercetools Connect](https://docs.commercetools.com/connect/concepts)
+In order to deploy your customized search connector application on commercetools Connect, it needs to be published. For details, please refer to [documentation about commercetools Connect](https://docs.commercetools.com/connect/concepts)
 In addition, in order to support connect, the search connector template has a folder structure as listed below
 ```
 ├── full-ingestion
