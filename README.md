@@ -1,5 +1,5 @@
 # connect-search-ingestion-template
-This repository provides a [connect](https://docs.commercetools.com/connect) template for a search ingestion connector for populating a Store specific exnternal search engine. This boilerplate code act as a starting point for such integration.
+This repository provides a [connect](https://docs.commercetools.com/connect) template for a search ingestion connector for populating a Store-specific external search engine. This boilerplate code acts as a starting point for such integration.
 
 This template uses the [Store](https://docs.commercetools.com/api/projects/stores) and [Product Selection](https://docs.commercetools.com/api/projects/product-selections) data models from commercetools composable commerce which can be used for querying Store-specific product data to power Store-specific frontends. Template is based on asynchronous [Subscriptions](https://docs.commercetools.com/api/projects/subscriptions) to keep the search indices up to date.
 
