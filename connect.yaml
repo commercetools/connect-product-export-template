@@ -1,5 +1,5 @@
 deployAs:
-  - name: full-ingestion
+  - name: full-export
     applicationType: service
     endpoint: /fullSync
     scripts:
