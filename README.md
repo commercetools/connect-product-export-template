@@ -1,5 +1,5 @@
-# connect-product-ingestion-template
-This repository provides a [connect](https://docs.commercetools.com/connect) template for a product ingestion connector for populating a external systems with product data from composable commerce. This boilerplate code acts as a starting point for such integration.
+# connect-product-export-template
+This repository provides a [connect](https://docs.commercetools.com/connect) template for a product export connector for populating a external systems with product data from composable commerce. This boilerplate code acts as a starting point for such integration.
 
 This template uses the [Product type](https://docs.commercetools.com/api/projects/productTypes),  [Product](https://docs.commercetools.com/api/projects/products), [Store](https://docs.commercetools.com/api/projects/stores),  [Product Selection](https://docs.commercetools.com/api/projects/product-selections) data models from commercetools composable commerce which can be used for querying Store-specific product data to sync into external systems. Template is based on asynchronous [Subscriptions](https://docs.commercetools.com/api/projects/subscriptions) to keep the external systems up to date.
 
@@ -24,11 +24,11 @@ Users are expected to create api clients/ keys in external system . Those detail
  
 ## Getting started
 The template contains two separated modules :
-- Full Ingestion : Provides a REST-API to users to export all products from specific store of a commercetools project to external system as initial load or  for full reindexing whenever needed. 
+- Full Export : Provides a REST-API to users to export all products from specific store of a commercetools project to external system as initial load or for full reindexing whenever needed. 
 - Incremental Updater : Receives message from commercetools project once there are product changes in commercetools store. The modified products are then synchronized to the external system.
 
 Regarding the development of both modules, please refer to the following documetations:
-- Development of Full Ingestion
+- Development of Full Export
 - Development of Incremental Updater
 
 #### 1. Develop your specific needs 
@@ -44,7 +44,7 @@ Follow guidelines [here](https://docs.commercetools.com/connect/getting-started)
 In order to deploy your customized connector application on commercetools Connect, it needs to be published. For details, please refer to [documentation about commercetools Connect](https://docs.commercetools.com/connect/concepts)
 In addition, in order to support connect, the search connector template has a folder structure as listed below
 ```
-├── full-ingestion
+├── full-export
 │   ├── src
 │   ├── test
 │   └── package.json
@@ -55,10 +55,10 @@ In addition, in order to support connect, the search connector template has a fo
 └── connect.yaml
 ```
 
-Connect deployment configuration is specified in `connect.yaml` which is required information needed for publishing of the application. Following is the deployment configuration used by full ingestion and incremental updater modules
+Connect deployment configuration is specified in `connect.yaml` which is required information needed for publishing of the application. Following is the deployment configuration used by full export and incremental updater modules
 ```
 deployAs:
-  - name: full-ingestion
+  - name: full-export
     applicationType: service
     endpoint: /fullSync
     scripts:
@@ -126,4 +126,4 @@ Here you can see the details about various variables in configuration
 
 ## Recommendations
 #### Implement your own test cases
-We have provided simple integration test cases with [Jest](https://jestjs.io/) and [supertest](https://github.com/ladjs/supertest#readme). The implementation is under `test` folder in both `full-ingestion` and `incremental-updater` modules. It is recommended to implement further test cases based on your own needs to test your development. 
+We have provided simple integration test cases with [Jest](https://jestjs.io/) and [supertest](https://github.com/ladjs/supertest#readme). The implementation is under `test` folder in both `full-export` and `incremental-updater` modules. It is recommended to implement further test cases based on your own needs to test your development. 
