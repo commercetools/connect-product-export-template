@@ -1,9 +1,8 @@
 {
-  "name": "full-ingestion",
+  "name": "full-export",
   "version": "1.0.0",
   "type": "module",
   "main": "src/index.js",
-  "private": true,
   "scripts": {
     "start": "node src/index.js",
     "start:dev": "node_modules/.bin/nodemon -q src/index.js",
