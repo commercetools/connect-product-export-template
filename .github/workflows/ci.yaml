@@ -35,8 +35,8 @@ jobs:
       - name: Execute integration test
         run: npm run test:ci
 
-  build-full-ingestion:
-    name: Build the application for full-ingestion
+  build-full-export:
+    name: Build the application for full-export
     runs-on: ubuntu-latest
     env:
       CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
@@ -47,7 +47,7 @@ jobs:
       SEARCH_PLATFORM_CONFIG: ${{ secrets.SEARCH_PLATFORM_CONFIG }}
     defaults:
       run:
-        working-directory: full-ingestion
+        working-directory: full-export
     steps:
       - name: Checkout
         uses: actions/checkout@v3
