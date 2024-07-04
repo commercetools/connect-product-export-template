@@ -31,6 +31,6 @@
     "dotenv": "^16.0.3",
     "express": "4.19.2",
     "supertest": "^6.3.3",
-    "validator": "^13.11.0"
+    "validator": "^13.12.0"
   }
 }
