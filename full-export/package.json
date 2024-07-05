@@ -21,7 +21,7 @@
     "eslint": "^8.46.0",
     "jest": "^29.7.0",
     "nodemon": "^2.0.20",
-    "prettier": "^2.8.8"
+    "prettier": "^3.3.2"
   },
   "dependencies": {
     "@commercetools-backend/loggers": "^21.19.0",
