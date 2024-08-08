@@ -17,21 +17,21 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@babel/preset-env": "^7.21.5",
+    "@babel/preset-env": "^7.24.8",
     "babel-jest": "^29.7.0",
     "eslint": "^9.6.0",
     "jest": "^29.7.0",
     "nodemon": "^2.0.20",
-    "prettier": "^2.8.8"
+    "prettier": "^3.3.3"
   },
   "dependencies": {
-    "@commercetools-backend/loggers": "^21.19.0",
-    "@commercetools/platform-sdk": "^4.1.0",
+    "@commercetools-backend/loggers": "^22.30.3",
+    "@commercetools/platform-sdk": "^7.9.0",
     "@commercetools/sdk-client-v2": "^2.5.0",
     "body-parser": "^1.20.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "supertest": "^7.0.0",
-    "validator": "^13.7.0"
+    "validator": "^13.12.0"
   }
 }
