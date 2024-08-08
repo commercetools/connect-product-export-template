@@ -24,8 +24,8 @@
     "prettier": "^2.8.8"
   },
   "dependencies": {
-    "@commercetools-backend/loggers": "^21.19.0",
-    "@commercetools/platform-sdk": "^4.1.0",
+    "@commercetools-backend/loggers": "^22.30.3",
+    "@commercetools/platform-sdk": "^7.10.0",
     "@commercetools/sdk-client-v2": "^2.2.0",
     "body-parser": "^1.20.1",
     "dotenv": "^16.4.5",
