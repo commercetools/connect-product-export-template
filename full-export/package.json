@@ -27,9 +27,9 @@
     "@commercetools-backend/loggers": "^22.30.3",
     "@commercetools/platform-sdk": "^7.10.0",
     "@commercetools/sdk-client-v2": "^2.2.0",
-    "body-parser": "^1.20.1",
+    "body-parser": "^1.20.3",
     "dotenv": "^16.4.5",
-    "express": "4.19.2",
+    "express": "4.21.0",
     "supertest": "^6.3.3",
     "validator": "^13.12.0"
   }
