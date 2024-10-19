@@ -30,7 +30,7 @@
     "@commercetools/sdk-client-v2": "^2.5.0",
     "body-parser": "^1.20.1",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "express": "^4.21.1",
     "supertest": "^7.0.0",
     "validator": "^13.12.0"
   }
