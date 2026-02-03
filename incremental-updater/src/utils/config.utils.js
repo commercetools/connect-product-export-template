@@ -1,6 +1,6 @@
-// import CustomError from '../errors/custom.error.js';
-// import envValidators from '../validators/env-var.validators.js';
-// import { getValidateMessages } from '../validators/helpers.validators.js';
+import CustomError from '../errors/custom.error.js';
+import envValidators from '../validators/env-var.validators.js';
+import { getValidateMessages } from '../validators/helpers.validators.js';
 
 /**
  * Read the configuration env vars
@@ -16,18 +16,21 @@ export const readConfiguration = () => {
     projectKey: process.env.CTP_PROJECT_KEY,
     scope: process.env.CTP_SCOPE,
     region: process.env.CTP_REGION,
+    connectSubscriptionDestination: process.env.CONNECT_SUBSCRIPTION_DESTINATION,
+    connectGcpTopicName: process.env.CONNECT_GCP_TOPIC_NAME,
+    connectGcpProjectId: process.env.CONNECT_GCP_PROJECT_ID,
+    connectAwsTopicArn: process.env.CONNECT_AWS_TOPIC_ARN,
   };
 
-  // Enable it for your environment variables validation
-  // const validationErrors = getValidateMessages(envValidators, envVars);
+  const validationErrors = getValidateMessages(envValidators, envVars);
 
-  // if (validationErrors.length) {
-  //   throw new CustomError(
-  //     'InvalidEnvironmentVariablesError',
-  //     'Invalid Environment Variables please check your .env file',
-  //     validationErrors
-  //   );
-  // }
+  if (validationErrors.length) {
+    throw new CustomError(
+      'InvalidEnvironmentVariablesError',
+      'Invalid Environment Variables please check your .env file',
+      validationErrors
+    );
+  }
 
   return envVars;
 };

@@ -8,6 +8,16 @@ import {
 /**
  * Create here your own validators
  */
+const validDestinations = (path, message) => [
+  path,
+  [
+    [
+      (value) => value === undefined || value === null || ['GCP', 'SNS'].includes(value),
+      message,
+    ],
+  ],
+];
+
 const envValidators = [
   standardString(
     ['clientId'],
@@ -50,6 +60,52 @@ const envValidators = [
     message: 'Not a valid region.',
     referencedBy: 'environmentVariables',
   }),
+
+  standardString(
+    ['connectSubscriptionDestination'],
+    {
+      code: 'InvalidSubscriptionDestination',
+      message: 'Subscription destination is required.',
+      referencedBy: 'environmentVariables',
+    },
+    { min: 2, max: 10 }
+  ),
+
+  validDestinations(['connectSubscriptionDestination'], {
+    code: 'InvalidSubscriptionDestination',
+    message: "Subscription destination must be either 'GCP' or 'SNS'.",
+    referencedBy: 'environmentVariables',
+  }),
+
+  optional(standardString)(
+    ['connectGcpTopicName'],
+    {
+      code: 'InvalidGcpTopicName',
+      message: 'GCP topic name should be a valid string.',
+      referencedBy: 'environmentVariables',
+    },
+    { min: 2, max: undefined }
+  ),
+
+  optional(standardString)(
+    ['connectGcpProjectId'],
+    {
+      code: 'InvalidGcpProjectId',
+      message: 'GCP project ID should be a valid string.',
+      referencedBy: 'environmentVariables',
+    },
+    { min: 2, max: undefined }
+  ),
+
+  optional(standardString)(
+    ['connectAwsTopicArn'],
+    {
+      code: 'InvalidAwsTopicArn',
+      message: 'AWS topic ARN should be a valid string.',
+      referencedBy: 'environmentVariables',
+    },
+    { min: 2, max: undefined }
+  ),
 ];
 
 export default envValidators;
