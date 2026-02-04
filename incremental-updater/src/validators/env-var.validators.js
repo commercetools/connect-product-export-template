@@ -12,7 +12,8 @@ const validDestinations = (path, message) => [
   path,
   [
     [
-      (value) => value === undefined || value === null || ['GCP', 'SNS'].includes(value),
+      (value) =>
+        value === undefined || value === null || ['GCP', 'SNS'].includes(value),
       message,
     ],
   ],
