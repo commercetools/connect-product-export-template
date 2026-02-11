@@ -13,7 +13,9 @@ const validDestinations = (path, message) => [
   [
     [
       (value) =>
-        value === undefined || value === null || ['GoogleCloudPubSub', 'SNS'].includes(value),
+        value === undefined ||
+        value === null ||
+        ['GoogleCloudPubSub', 'SNS'].includes(value),
       message,
     ],
   ],
@@ -74,7 +76,8 @@ const envValidators = [
 
   validDestinations(['connectSubscriptionDestination'], {
     code: 'InvalidSubscriptionDestination',
-    message: "Subscription destination must be either 'GoogleCloudPubSub' or 'SNS'.",
+    message:
+      "Subscription destination must be either 'GoogleCloudPubSub' or 'SNS'.",
     referencedBy: 'environmentVariables',
   }),
 
