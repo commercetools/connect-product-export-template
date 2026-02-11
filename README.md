@@ -55,8 +55,23 @@ In addition, in order to support connect, the search connector template has a fo
 └── connect.yaml
 ```
 
-Connect deployment configuration is specified in `connect.yaml` which is required information needed for publishing of the application. Following is the deployment configuration used by full export and incremental updater modules
+Connect deployment configuration is specified in `connect.yaml` which is required information needed for publishing of the application. Anything defined under `inheritAs` is shared across all applications. Following is the deployment configuration used by full export and incremental updater modules
 ```
+inheritAs:
+  configuration:
+    securedConfiguration:
+      - key: CTP_PROJECT_KEY
+        description: Commercetools project key
+      - key: CTP_CLIENT_ID
+        description: Commercetools client ID
+      - key: CTP_CLIENT_SECRET
+        description: Commercetools client secreet
+      - key: CTP_SCOPE
+        description: Commercetools client scope
+      - key: CTP_REGION
+        description: Region of Commercetools project
+      - key: SEARCH_PLATFORM_CONFIG
+        description: Escaped JSON object including credentails to search platform and other settings
 deployAs:
   - name: full-export
     applicationType: service
@@ -64,19 +79,8 @@ deployAs:
     scripts:
       postDeploy: npm install
     configuration:
-      securedConfiguration:
-        - key: CTP_PROJECT_KEY
-          description: commercetools project key
-        - key: CTP_CLIENT_ID
-          description: commercetools client ID
-        - key: CTP_CLIENT_SECRET
-          description: commercetools client secreet
-        - key: CTP_SCOPE
-          description: commercetools client scope
-        - key: CTP_REGION
-          description: Region of commercetools project
-        - key: SEARCH_PLATFORM_CONFIG
-          description: Escaped JSON object including credentails to external platform and other settings
+      standardConfiguration: []
+      securedConfiguration: []
   - name: incremental-updater
     applicationType: event
     endpoint: /deltaSync
@@ -86,19 +90,7 @@ deployAs:
     configuration:
       securedConfiguration:
         - key: CTP_STORE_KEY
-          description: Unique key of commercetools Store
-        - key: CTP_PROJECT_KEY
-          description: commercetools project key
-        - key: CTP_CLIENT_ID
-          description: commercetools client ID
-        - key: CTP_CLIENT_SECRET
-          description: commercetools client secreet
-        - key: CTP_SCOPE
-          description: commercetools client scope
-        - key: CTP_REGION
-          description: Region of commercetools project
-        - key: SEARCH_PLATFORM_CONFIG
-          description: Escaped JSON object including credentails to external platform and other settings
+          description: Unique key of Commercetools Store
 ```
 
 Here you can see the details about various variables in configuration

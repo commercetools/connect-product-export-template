@@ -36,9 +36,8 @@ export async function saveChangedProductToExtSearchIndex(productId) {
 }
 
 export async function saveDeletedProductToExtSearchIndex(productId) {
-  const productProjectionToBeRemoved = await getProductProjectionInStoreById(
-    productId
-  );
+  const productProjectionToBeRemoved =
+    await getProductProjectionInStoreById(productId);
 
   if (productProjectionToBeRemoved)
     logger.info(
